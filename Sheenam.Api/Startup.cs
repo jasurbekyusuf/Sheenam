@@ -1,6 +1,6 @@
 //===================================================
 // Copyright (c)  coalition of Good-Hearted Engineers
-// Free To Use Comfort and Pease
+// Free To Use To Find Comfort and Pease
 //===================================================
 
 using Microsoft.AspNetCore.Builder;
