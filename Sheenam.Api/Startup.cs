@@ -18,7 +18,6 @@ namespace Sheenam.Api
         public Startup(IConfiguration configuration) =>
             Configuration = configuration;
 
-
         public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
@@ -28,7 +27,7 @@ namespace Sheenam.Api
                 Title = "Sheenam.Api",
                 Version = "v1"
             };
-            
+
             services.AddControllers();
             services.AddDbContext<StorageBroker>();
             services.AddTransient<IStorageBroker, StorageBroker>();
@@ -51,10 +50,9 @@ namespace Sheenam.Api
                 app.UseSwaggerUI(options =>
                 {
                     options.SwaggerEndpoint(
-                      url: "/swagger/v1/swagger.json",
-                      name: "Sheenam.Api v1");
+                        url: "/swagger/v1/swagger.json",
+                        name: "Sheenam.Api v1");
                 });
-
             }
 
             app.UseHttpsRedirection();
