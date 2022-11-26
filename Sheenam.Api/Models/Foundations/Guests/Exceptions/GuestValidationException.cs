@@ -7,9 +7,9 @@ using Xeptions;
 
 namespace Sheenam.Api.Models.Foundations.Guests.Exceptions
 {
-    public class GuestValidationExceptions : Xeption
+    public class GuestValidationException : Xeption
     {
-        public GuestValidationExceptions(Xeption innerException)
+        public GuestValidationException(Xeption innerException)
             : base(message: "Guest valdation error occured, fix the errors and try again",
                   innerException)
         { }

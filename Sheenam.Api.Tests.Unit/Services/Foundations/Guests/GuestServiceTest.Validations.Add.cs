@@ -5,7 +5,7 @@
 
 using Sheenam.Api.Models.Foundations.Guests;
 using Sheenam.Api.Models.Foundations.Guests.Exceptions;
-
+using Xunit;
 namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
 {
     public partial class GuestServiceTest
@@ -17,12 +17,12 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
             var nullGuestException = new NullGuestException();
 
             var expectedGuestValidationException =
-                new GuestValidationExceptions(nullGuestException);
+                new GuestValidationException(nullGuestException);
 
             ValueTask<Guest> addGuestTask =
                 this.guestService.AddGuestAsync(nullGuest);
 
-            await Assert.ThrowsAnyAsync<GuestValidationExceptions>(()=>
+            await Assert.ThrowsAnyAsync<GuestValidationException>(()=>
                 addGuestTask.AsTask());
         }
     }
