@@ -37,7 +37,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
             
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertGuestAsync(It.IsAny<Guest>()),
-                Times.Once);
+                Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
