@@ -23,14 +23,21 @@ namespace Sheenam.Api.Services.Foundations.Guests
             catch (NullGuestException nullGuestException)
             {
                 throw CreateAndLogValidationException(nullGuestException);
+            }        
+            catch (InvalidGuestException invalidGuestException)
+            {
+                throw CreateAndLogValidationException(invalidGuestException);
             }
         }
-        private GuestValidationException CreateAndLogValidationException(Xeption xeption)
+
+        private GuestValidationException CreateAndLogValidationException(Xeption exeption)
         {
             var guestValidationException =
-                new GuestValidationException(nullGuestException);
+                new GuestValidationException(exeption);
 
                 this.loggingBroker.LogError(guestValidationException);
+
+            return guestValidationException;
         }
     }
 }
