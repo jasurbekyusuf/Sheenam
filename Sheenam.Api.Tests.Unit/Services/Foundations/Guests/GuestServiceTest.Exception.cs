@@ -54,14 +54,14 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
             Guest someGuest = CreateRandomGuest();
             string someMessage = GetRandomString();
 
-            DuplicateKeyException dublicateKeyException =
+            var dublicateKeyException =
                 new DuplicateKeyException(someMessage);
 
             var alreadyExistGuestException =
                 new AlreadyExistGuestException(dublicateKeyException);
 
             var expectedguestDependencyException =
-                new GuestDependencyException(alreadyExistGuestException);
+                new GuestDependencyValidationException(alreadyExistGuestException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.InsertGuestAsync(someGuest))

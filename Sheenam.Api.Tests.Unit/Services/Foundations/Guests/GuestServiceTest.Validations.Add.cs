@@ -6,8 +6,6 @@
 using Moq;
 using Sheenam.Api.Models.Foundations.Guests;
 using Sheenam.Api.Models.Foundations.Guests.Exceptions;
-using Xunit;
-using Xunit.Sdk;
 
 namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
 {
