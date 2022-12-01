@@ -3,6 +3,7 @@
 // Free To Use To Find Comfort and Pease
 //===================================================
 
+using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Sheenam.Api.Models.Foundations.Guests;
@@ -42,6 +43,44 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
                 broker.LogCritical(It.Is(SameExceptionAs(
                     expectedGuestDependencyException))),
                         Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyValidationOnAddIfDuplicateKeyErrorOccursAndLogItAsnc()
+        {
+            Guest someGuest = CreateRandomGuest();
+            string someMessage = GetRandomString();
+
+            DuplicateKeyException dublicateKeyException =
+                new DuplicateKeyException(someMessage);
+
+            var alreadyExistGuestException =
+                new AlreadyExistGuestException(dublicateKeyException);
+
+            var expectedguestDependencyException =
+                new GuestDependencyException(alreadyExistGuestException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.InsertGuestAsync(someGuest))
+                .ThrowsAsync(dublicateKeyException);
+
+            ValueTask<Guest> addGuestTask = 
+                this.guestService.AddGuestAsync(someGuest);
+
+            await Assert.ThrowsAnyAsync<GuestDependencyValidationException>(()=>
+                addGuestTask.AsTask());
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertGuestAsync(someGuest),
+                Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedguestDependencyException))),
+                    Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
