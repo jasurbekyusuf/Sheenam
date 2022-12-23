@@ -6,7 +6,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Sheenam.Api.Models.Foundations.Homes;
+using Sheenam.Api.Models.Foundations.Hosts;
 using Sheenam.Api.Models.Foundations.Hosts;
 
 namespace Sheenam.Api.Brokers.Storages
@@ -17,5 +17,6 @@ namespace Sheenam.Api.Brokers.Storages
         IQueryable<Host> SelectAllHosts();
         ValueTask<Host> SelectHostByIdAsync(Guid id);
         ValueTask<Host> UpdateHostAsync(Host host);
+        ValueTask<Host> DeleteHostAsync(Host host);
     }
 }
