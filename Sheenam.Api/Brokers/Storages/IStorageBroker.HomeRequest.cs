@@ -4,16 +4,12 @@
 //===================================================
 
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Sheenam.Api.Models.Foundations.HomeRequests;
 
 namespace Sheenam.Api.Brokers.Storages
 {
-    public partial class StorageBroker
+    public partial interface IStorageBroker
     {
-        public DbSet<HomeRequest> HomeRequests { get; set; }
-
-        public async ValueTask<HomeRequest> InsertHomeRequestAsync(HomeRequest homeRequestt) =>
-            await InsertAsync(homeRequestt);
+        ValueTask<HomeRequest> InsertHomeRequestAsync(HomeRequest homeRequest);
     }
 }
