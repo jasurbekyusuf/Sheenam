@@ -1,4 +1,9 @@
-﻿using System;
+﻿//===================================================
+// Copyright (c)  coalition of Good-Hearted Engineers
+// Free To Use To Find Comfort and Pease
+//===================================================
+
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
