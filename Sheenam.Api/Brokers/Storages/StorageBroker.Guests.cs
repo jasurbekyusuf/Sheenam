@@ -3,7 +3,9 @@
 // Free To Use To Find Comfort and Pease
 //===================================================
 
+using System;
 using System.Linq;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Sheenam.Api.Models.Foundations.Guests;
@@ -19,6 +21,9 @@ namespace Sheenam.Api.Brokers.Storages
             await InsertAsync(guest);
 
         public IQueryable<Guest> SelectAllGuests() =>
-            SelectAll<Guest>();
+        SelectAll<Guest>();
+
+        public async ValueTask<Guest> SelectGuestByIdAsync(Guid id) =>
+            await SelectAsync<Guest>(id);
     }
 }
