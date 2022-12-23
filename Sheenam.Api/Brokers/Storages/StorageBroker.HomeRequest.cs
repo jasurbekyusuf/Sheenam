@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Sheenam.Api.Models.Foundations.HomeRequests;
-using Sheenam.Api.Models.Foundations.HomeRequests;
 
 namespace Sheenam.Api.Brokers.Storages
 {
