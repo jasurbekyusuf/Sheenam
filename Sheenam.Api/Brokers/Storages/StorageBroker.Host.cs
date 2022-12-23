@@ -17,7 +17,7 @@ namespace Sheenam.Api.Brokers.Storages
         public async ValueTask<Host> InsertHostAsync(Host host) =>
             await InsertAsync(host);
 
-        public IQueryable<Host> SelectAllHost() =>
+        public IQueryable<Host> SelectAllHosts() =>
             SelectAll<Host>();
     }
 }
