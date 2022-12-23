@@ -66,6 +66,9 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
             return (T)(object)randomNumber;
         }
 
+        private static string GetRandomMessage() =>
+            new MnemonicString(wordCount: GetRandomNumber()).GetValue();
+
         private Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
             actualException => actualException.SameExceptionAs(expectedException);
 
