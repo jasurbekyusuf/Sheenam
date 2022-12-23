@@ -3,8 +3,6 @@
 // Free To Use To Find Comfort and Pease
 //===================================================
 
-
-
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
