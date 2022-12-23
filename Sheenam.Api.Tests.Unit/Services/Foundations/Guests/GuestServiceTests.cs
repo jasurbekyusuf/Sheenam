@@ -16,13 +16,13 @@ using Xeptions;
 
 namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
 {
-    public partial class GuestServiceTest
+    public partial class GuestServiceTests
     {
         private readonly Mock<IStorageBroker> storageBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly IGuestService guestService;
 
-        public GuestServiceTest()
+        public GuestServiceTests()
         {
             this.storageBrokerMock = new Mock<IStorageBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();

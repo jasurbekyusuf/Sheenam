@@ -9,7 +9,7 @@ using Sheenam.Api.Models.Foundations.Guests.Exceptions;
 
 namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
 {
-    public partial class GuestServiceTest
+    public partial class GuestServiceTests
     {
         [Fact]
         public async Task ShouldThrowValidationExceptionOnAddIfGuestIsNullAndLogItAsync()
