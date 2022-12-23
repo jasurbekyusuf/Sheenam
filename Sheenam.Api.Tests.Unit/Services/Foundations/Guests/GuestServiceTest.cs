@@ -31,6 +31,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
                 storageBroker: this.storageBrokerMock.Object,
                 loggingBroker: this.loggingBrokerMock.Object);
         }
+
         private static Guest CreateRandomGuest() =>
             CreateGuestFiller(date: GetRandomDateTimeOffset()).Create();
 
@@ -58,7 +59,6 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
 
         private Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
             actualException => actualException.SameExceptionAs(expectedException);
-
 
         private static Filler<Guest> CreateGuestFiller(DateTimeOffset date)
         {

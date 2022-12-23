@@ -44,7 +44,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
         [Theory]
         [InlineData(null)]
         [InlineData("")]
-        [InlineData("")]
+        [InlineData(" ")]
         public async Task ShouldThrowValidationExceptionOnAddIfGuestIsInvalidAndLogItAsync(
             string invalidText)
         {

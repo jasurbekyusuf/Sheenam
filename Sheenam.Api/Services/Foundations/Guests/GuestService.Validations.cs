@@ -32,6 +32,7 @@ namespace Sheenam.Api.Services.Foundations.Guests
                 throw new NullGuestException();
             }
         }
+
         private static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == Guid.Empty,
@@ -69,6 +70,7 @@ namespace Sheenam.Api.Services.Foundations.Guests
                         value: rule.Message);
                 }
             }
+
             invalidGuestException.ThrowIfContainsErrors();
         }
     }
