@@ -3,9 +3,13 @@
 // Free To Use To Find Comfort and Pease
 //===================================================
 
+using Microsoft.EntityFrameworkCore;
+using Sheenam.Api.Models.Foundations.HomeRequests;
+
 namespace Sheenam.Api.Brokers.Storages
 {
-    public partial interface IStorageBroker
+    public partial class StorageBroker
     {
+        public DbSet<HomeRequest> HomeRequests { get; set; }
     }
 }

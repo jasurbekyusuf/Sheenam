@@ -3,8 +3,6 @@
 // Free To Use To Find Comfort and Pease
 //===================================================
 
-
-
 using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
