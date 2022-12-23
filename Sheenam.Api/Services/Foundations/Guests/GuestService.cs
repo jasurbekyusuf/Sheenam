@@ -23,6 +23,7 @@ namespace Sheenam.Api.Services.Foundations.Guests
             this.storageBroker = storageBroker;
             this.loggingBroker = loggingBroker;
         }
+
         public ValueTask<Guest> AddGuestAsync(Guest guest) =>
         TryCatch(async () =>
         {
@@ -31,9 +32,7 @@ namespace Sheenam.Api.Services.Foundations.Guests
             return await this.storageBroker.InsertGuestAsync(guest);
         });
 
-        public IQueryable<Guest> RetrieveAllGuests()
-        {
-            throw new System.NotImplementedException();
-        }
+        public IQueryable<Guest> RetrieveAllGuests() =>
+            this.storageBroker.SelectAllGuests();
     }
 }
