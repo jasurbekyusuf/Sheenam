@@ -17,7 +17,7 @@ namespace Sheenam.Api.Brokers.Storages
         public async ValueTask<Home> InsertHometAsync(Home home) =>
             await InsertAsync(home);
 
-        public IQueryable<Home> SelectAllHome() =>
+        public IQueryable<Home> SelectAllHomes() =>
             SelectAll<Home>();
     }
 }

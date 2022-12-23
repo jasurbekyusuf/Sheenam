@@ -12,6 +12,6 @@ namespace Sheenam.Api.Brokers.Storages
     public partial interface IStorageBroker
     {
         ValueTask<Home> InsertHometAsync(Home home);
-        IQueryable<Home> SelectAllHome();
+        IQueryable<Home> SelectAllHomes();
     }
 }
