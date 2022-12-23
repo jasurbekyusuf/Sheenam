@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Sheenam.Api.Models.Foundations.HomeRequests;
+using Sheenam.Api.Models.Foundations.HomeRequests;
 
 namespace Sheenam.Api.Brokers.Storages
 {
@@ -26,5 +27,8 @@ namespace Sheenam.Api.Brokers.Storages
 
         public async ValueTask<HomeRequest> UpdateHomeRequestAsync(HomeRequest homeRequest) =>
             await UpdateAsync(homeRequest);
+
+        public async ValueTask<HomeRequest> DeleteHomeRequestAsync(HomeRequest homeRequest) =>
+            await DeleteAsync(homeRequest);
     }
 }
