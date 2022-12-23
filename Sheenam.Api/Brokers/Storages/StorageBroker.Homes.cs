@@ -3,6 +3,7 @@
 // Free To Use To Find Comfort and Pease
 //===================================================
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -19,5 +20,8 @@ namespace Sheenam.Api.Brokers.Storages
 
         public IQueryable<Home> SelectAllHomes() =>
             SelectAll<Home>();
+
+        public async ValueTask<Home> SelectHometByIdAsync(Guid id) =>
+            await SelectAsync<Home>(id);
     }
 }
