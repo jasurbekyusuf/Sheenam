@@ -13,6 +13,6 @@ namespace Sheenam.Api.Models.Foundations.Guests.Exceptions
         public FailedGuestStorageException(Exception innerException)
             : base(message: "Failed guest storage error occured, contact support",
                   innerException)
-        {}
+        { }
     }
 }

@@ -11,25 +11,23 @@ namespace Sheenam.Api.Services.Foundations.Guests
 {
     public partial class GuestService
     {
-        public static InvalidGuestException InvalidGuestException { get; private set; }
-
         private void ValidateGuestOnAdd(Guest guest)
         {
             ValidateGuestNotNull(guest);
 
             Validate(
-                    (Rule: IsInvalid(guest.Id), Parameter: nameof(Guest.Id)),
-                    (Rule: IsInvalid(guest.FirstName), Parameter: nameof(Guest.FirstName)),
-                    (Rule: IsInvalid(guest.LastName), Parameter: nameof(Guest.LastName)),
-                    (Rule: IsInvalid(guest.DateOfBirth), Parameter: nameof(Guest.DateOfBirth)),
-                    (Rule: IsInvalid(guest.Email), Parameter: nameof(Guest.Email)),
-                    (Rule: IsInvalid(guest.Address), Parameter: nameof(Guest.Address)),    
-                    (Rule: IsInvalid(guest.Gender), Parameter: nameof(Guest.Gender)));
+                (Rule: IsInvalid(guest.Id), Parameter: nameof(Guest.Id)),
+                (Rule: IsInvalid(guest.FirstName), Parameter: nameof(Guest.FirstName)),
+                (Rule: IsInvalid(guest.LastName), Parameter: nameof(Guest.LastName)),
+                (Rule: IsInvalid(guest.DateOfBirth), Parameter: nameof(Guest.DateOfBirth)),
+                (Rule: IsInvalid(guest.Email), Parameter: nameof(Guest.Email)),
+                (Rule: IsInvalid(guest.Address), Parameter: nameof(Guest.Address)),
+                (Rule: IsInvalid(guest.Gender), Parameter: nameof(Guest.Gender)));
         }
 
         private void ValidateGuestNotNull(Guest guest)
         {
-            if (guest is null) 
+            if (guest is null)
             {
                 throw new NullGuestException();
             }
@@ -60,18 +58,18 @@ namespace Sheenam.Api.Services.Foundations.Guests
 
         private static void Validate(params (dynamic Rule, string Parametr)[] validations)
         {
-            InvalidGuestException = new InvalidGuestException();
+            var invalidGuestException = new InvalidGuestException();
 
             foreach ((dynamic rule, string parameter) in validations)
             {
                 if (rule.Condition)
                 {
-                    InvalidGuestException.UpsertDataList(
+                    invalidGuestException.UpsertDataList(
                         key: parameter,
                         value: rule.Message);
                 }
             }
-            InvalidGuestException.ThrowIfContainsErrors();
+            invalidGuestException.ThrowIfContainsErrors();
         }
     }
 }

@@ -3,14 +3,12 @@
 // Free To Use To Find Comfort and Pease
 //===================================================
 
-using Xeptions;
+using Microsoft.AspNetCore.Mvc;
 
-namespace Sheenam.Api.Models.Foundations.Guests.Exceptions
+namespace Sheenam.Api.Controllers
 {
-    public class NullGuestException : Xeption
+    public class GuestsController : Controller
     {
-        public NullGuestException()
-           : base(message: "Guest is null")
-        { }
+
     }
 }

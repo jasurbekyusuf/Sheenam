@@ -25,7 +25,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
         public GuestServiceTest()
         {
             this.storageBrokerMock = new Mock<IStorageBroker>();
-            this.loggingBrokerMock= new Mock<ILoggingBroker>();
+            this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
             this.guestService = new GuestService(
                 storageBroker: this.storageBrokerMock.Object,
@@ -38,7 +38,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
         private static int GetRandomNumber() =>
-            new IntRange(min:2, max:9).GetValue();
+            new IntRange(min: 2, max: 9).GetValue();
 
         private static string GetRandomString() =>
             new MnemonicString().GetValue();
@@ -58,7 +58,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
 
         private Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
             actualException => actualException.SameExceptionAs(expectedException);
-        
+
 
         private static Filler<Guest> CreateGuestFiller(DateTimeOffset date)
         {
