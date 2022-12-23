@@ -36,13 +36,11 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
                 addGuestTask.AsTask());
 
             this.storageBrokerMock.Verify(broker =>
-                broker.InsertGuestAsync(someGuest),
-                Times.Once());
+                broker.InsertGuestAsync(someGuest), Times.Once());
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
-                    expectedGuestDependencyException))),
-                        Times.Once);
+                    expectedGuestDependencyException))), Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -67,20 +65,54 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
                 broker.InsertGuestAsync(someGuest))
                 .ThrowsAsync(dublicateKeyException);
 
-            ValueTask<Guest> addGuestTask = 
+            ValueTask<Guest> addGuestTask =
                 this.guestService.AddGuestAsync(someGuest);
 
-            await Assert.ThrowsAnyAsync<GuestDependencyValidationException>(()=>
+            await Assert.ThrowsAnyAsync<GuestDependencyValidationException>(() =>
                 addGuestTask.AsTask());
 
             this.storageBrokerMock.Verify(broker =>
-                broker.InsertGuestAsync(someGuest),
-                Times.Once);
+                broker.InsertGuestAsync(someGuest), Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedguestDependencyException))),
-                    Times.Once);
+                    expectedguestDependencyException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            Guest someGuest = CreateRandomGuest();
+            var serviceException = new Exception();
+
+            var failedGuestServiceException =
+                new FailedGuestServiceException(serviceException);
+
+            var expectedGuestServiceException =
+                new GuestServiceException(failedGuestServiceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.InsertGuestAsync(someGuest))
+                    .ThrowsAsync(serviceException);
+
+            // when
+            ValueTask<Guest> addGuestTask =
+                this.guestService.AddGuestAsync(someGuest);
+
+            // then
+            await Assert.ThrowsAsync<GuestServiceException>(() =>
+                addGuestTask.AsTask());
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertGuestAsync(someGuest), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGuestServiceException))), Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

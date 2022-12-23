@@ -3,16 +3,15 @@
 // Free To Use To Find Comfort and Pease
 //===================================================
 
-using System;
 using Xeptions;
 
 namespace Sheenam.Api.Models.Foundations.Guests.Exceptions
 {
-    public class FailedGuestStorageException : Xeption
+    public class GuestServiceException : Xeption
     {
-        public FailedGuestStorageException(Exception innerException)
-            : base(message: "Failed guest storage error occured, contact support",
-                  innerException)
-        {}
+        public GuestServiceException(Xeption innerException)
+            :base(message: "Guest service error occurred, contact support",
+                 innerException)
+        { }
     }
 }
