@@ -26,13 +26,13 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
                 this.guestService.AddGuestAsync(nullGuest);
 
             //Then
-            await Assert.ThrowsAnyAsync<GuestValidationException>(()=>
+            await Assert.ThrowsAnyAsync<GuestValidationException>(() =>
                 addGuestTask.AsTask());
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(expectedGuestValidationException))),
                     Times.Once);
-            
+
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertGuestAsync(It.IsAny<Guest>()),
                 Times.Never);
@@ -88,7 +88,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
                 this.guestService.AddGuestAsync(invalidGuest);
 
             //then
-            await Assert.ThrowsAsync<GuestValidationException>(()=>
+            await Assert.ThrowsAsync<GuestValidationException>(() =>
                 addGuestTask.AsTask());
 
             this.loggingBrokerMock.Verify(broker =>
@@ -114,10 +114,10 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
             var invalidGuestException = new InvalidGuestException();
 
             invalidGuestException.AddData(
-                key:nameof(Guest.Gender),
+                key: nameof(Guest.Gender),
                 values: "Value is invalid");
 
-            var expectedGuestValidationException = 
+            var expectedGuestValidationException =
                 new GuestValidationException(invalidGuestException);
 
             // when
@@ -126,10 +126,10 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
 
 
             // then
-            await Assert.ThrowsAsync<GuestValidationException>(()=>
+            await Assert.ThrowsAsync<GuestValidationException>(() =>
                 addGuestTask.AsTask());
 
-            this.loggingBrokerMock.Verify(broker=>
+            this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedGuestValidationException))),
                         Times.Once);
