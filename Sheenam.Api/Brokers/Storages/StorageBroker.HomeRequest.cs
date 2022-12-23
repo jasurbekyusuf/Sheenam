@@ -13,7 +13,7 @@ namespace Sheenam.Api.Brokers.Storages
     {
         public DbSet<HomeRequest> HomeRequests { get; set; }
 
-        public async ValueTask<HomeRequest> InsertHomeRequestAsync(HomeRequest homeRequestt) =>
-            await InsertAsync(homeRequestt);
+        public async ValueTask<HomeRequest> InsertHomeRequestAsync(HomeRequest homeRequest) =>
+            await InsertAsync(homeRequest);
     }
 }
