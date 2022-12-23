@@ -7,7 +7,6 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Sheenam.Api.Models.Foundations.Hosts;
-using Sheenam.Api.Models.Foundations.Hosts;
 
 namespace Sheenam.Api.Brokers.Storages
 {

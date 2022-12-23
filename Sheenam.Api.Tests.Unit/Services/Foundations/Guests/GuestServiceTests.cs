@@ -16,13 +16,13 @@ using Xeptions;
 
 namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
 {
-    public partial class GuestServiceTest
+    public partial class GuestServiceTests
     {
         private readonly Mock<IStorageBroker> storageBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly IGuestService guestService;
 
-        public GuestServiceTest()
+        public GuestServiceTests()
         {
             this.storageBrokerMock = new Mock<IStorageBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
@@ -35,6 +35,12 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
         private static Guest CreateRandomGuest() =>
             CreateGuestFiller(date: GetRandomDateTimeOffset()).Create();
 
+        private static IQueryable<Guest> CreateRandomGuests()
+        {
+            return CreateGuestFiller(date: GetRandomDateTimeOffset())
+                .Create(count: GetRandomNumber()).AsQueryable();
+        }
+
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
@@ -43,6 +49,9 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
 
         private static string GetRandomString() =>
             new MnemonicString().GetValue();
+
+        private static SqlException CreateSqlException() =>
+            (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
 
         private static SqlException GetSqlError() =>
             (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
@@ -56,6 +65,9 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
             }
             return (T)(object)randomNumber;
         }
+
+        private static string GetRandomMessage() =>
+            new MnemonicString(wordCount: GetRandomNumber()).GetValue();
 
         private Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
             actualException => actualException.SameExceptionAs(expectedException);
