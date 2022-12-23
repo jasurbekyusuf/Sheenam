@@ -33,9 +33,7 @@ namespace Sheenam.Api.Services.Foundations.Guests
         });
 
         public IQueryable<Guest> RetrieveAllGuests() =>
-        TryCatch(() =>
-        {
-            return this.storageBroker.SelectAllGuests();
-        });
+        TryCatch(() => this.storageBroker.SelectAllGuests());
+
     }
 }
