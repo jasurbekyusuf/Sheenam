@@ -3,13 +3,14 @@
 // Free To Use To Find Comfort and Pease
 //===================================================
 
-using System.Threading.Tasks;
-using Sheenam.Api.Models.Foundations.Guests;
+using Xeptions;
 
-namespace Sheenam.Api.Brokers.Storages
+namespace Sheenam.Api.Models.Foundations.Guests.Exceptions
 {
-    public partial interface IStorageBroker
+    public class InvalidGuestException : Xeption
     {
-        ValueTask<Guest> InsertGuestAsync(Guest guest);
+        public InvalidGuestException() 
+            : base(message:"Guest is invalid") 
+        { }
     }
 }

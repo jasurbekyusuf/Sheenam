@@ -6,10 +6,10 @@
 using System.Threading.Tasks;
 using Sheenam.Api.Models.Foundations.Guests;
 
-namespace Sheenam.Api.Brokers.Storages
+namespace Sheenam.Api.Services.Foundations.Guests
 {
-    public partial interface IStorageBroker
+    public interface IGuestService
     {
-        ValueTask<Guest> InsertGuestAsync(Guest guest);
+        ValueTask<Guest> AddGuestAsync(Guest guest);
     }
 }

@@ -51,8 +51,8 @@ namespace Sheenam.Api
                 app.UseSwaggerUI(options =>
                 {
                     options.SwaggerEndpoint(
-                      url: "/swagger/v1/swagger.json",
-                      name: "Sheenam.Api v1");
+                        url: "/swagger/v1/swagger.json",
+                        name: "Sheenam.Api v1");
                 });
             }
 
