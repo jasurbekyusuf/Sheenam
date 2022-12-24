@@ -45,7 +45,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
             actualGuest.Should().BeEquivalentTo(expectedGuest);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTime(), Times.Once);
+                broker.GetCurrentDateTime(), Times.Never);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectGuestByIdAsync(GuestId), Times.Once);

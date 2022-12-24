@@ -6,10 +6,12 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.VisualBasic;
 using Sheenam.Api.Brokers.DateTimes;
 using Sheenam.Api.Brokers.Loggings;
 using Sheenam.Api.Brokers.Storages;
 using Sheenam.Api.Models.Foundations.Guests;
+using static DotNetOpenAuth.OpenId.Extensions.AttributeExchange.WellKnownAttributes;
 
 namespace Sheenam.Api.Services.Foundations.Guests
 {
@@ -52,9 +54,14 @@ namespace Sheenam.Api.Services.Foundations.Guests
             return maybeGuest;
         });
 
-        public ValueTask<Guest> ModifyGuestAsync(Guest guest)
+        public ValueTask<Guest> ModifyGuestAsync(Guest guest) =>
+        TryCatch(async () =>
         {
-            throw new NotImplementedException();
-        }
+            ValidateGuestOnModify(guest);
+
+            var maybeGuest = await this.storageBroker.SelectGuestByIdAsync(guest.Id);
+
+            return await this.storageBroker.UpdateGuestAsync(guest);
+        });
     }
 }
