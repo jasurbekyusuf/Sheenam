@@ -36,6 +36,23 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
                 dateTimeBroker: this.dateTimeBrokerMock.Object);
         }
 
+        public static TheoryData<int> InvalidSeconds()
+        {
+            int secondsInPast = -1 * new IntRange(
+                min: 60,
+                max: short.MaxValue).GetValue();
+
+            int secondsInFuture = new IntRange(
+                min: 0,
+                max: short.MaxValue).GetValue();
+
+            return new TheoryData<int>
+            {
+                secondsInPast,
+                secondsInFuture
+            };
+        }
+
         private static Guest CreateRandomGuest(DateTimeOffset dates) =>
             CreateGuestFiller(dates: GetRandomDateTimeOffset()).Create();
 
