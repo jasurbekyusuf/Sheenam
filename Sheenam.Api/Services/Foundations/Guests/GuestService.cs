@@ -6,6 +6,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Sheenam.Api.Brokers.DateTimes;
 using Sheenam.Api.Brokers.Loggings;
 using Sheenam.Api.Brokers.Storages;
 using Sheenam.Api.Models.Foundations.Guests;
@@ -16,13 +17,16 @@ namespace Sheenam.Api.Services.Foundations.Guests
     {
         private readonly IStorageBroker storageBroker;
         private readonly ILoggingBroker loggingBroker;
+        private readonly IDateTimeBroker dateTimeBroker;
 
         public GuestService(
             IStorageBroker storageBroker,
-            ILoggingBroker loggingBroker)
+            ILoggingBroker loggingBroker,
+            IDateTimeBroker dateTimeBroker)
         {
             this.storageBroker = storageBroker;
             this.loggingBroker = loggingBroker;
+            this.dateTimeBroker = dateTimeBroker;
         }
 
         public ValueTask<Guest> AddGuestAsync(Guest guest) =>
@@ -47,5 +51,10 @@ namespace Sheenam.Api.Services.Foundations.Guests
 
             return maybeGuest;
         });
+
+        public ValueTask<Guest> ModifyGuestAsync(Guest guest)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
