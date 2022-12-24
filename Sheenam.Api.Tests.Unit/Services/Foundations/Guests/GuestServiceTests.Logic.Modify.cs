@@ -53,7 +53,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTime(),
-                    Times.Once);
+                    Times.Never);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdateGuestAsync(inputGuest),

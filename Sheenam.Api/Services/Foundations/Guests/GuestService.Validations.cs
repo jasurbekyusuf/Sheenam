@@ -39,15 +39,14 @@ namespace Sheenam.Api.Services.Foundations.Guests
                 (Rule: IsInvalid(guest.Gender), Parameter: nameof(Guest.Gender)),
                 (Rule: IsInvalid(guest.CreatedDate), Parameter: nameof(Guest.CreatedDate)),
                 (Rule: IsInvalid(guest.UpdatedDate), Parameter: nameof(Guest.UpdatedDate)),
+                //(Rule: IsNotRecent(guest.UpdatedDate), Parameter: nameof(Guest.UpdatedDate)),
 
                 (Rule: IsSame(
                     firstDate: guest.UpdatedDate,
                     secondDate: guest.CreatedDate,
-                    secondDateName: nameof(Guest.CreatedDate)),
+                    secondDateName: nameof(guest.CreatedDate)),
 
-                Parameter: nameof(Guest.UpdatedDate)),
-
-                (Rule: IsNotRecent(guest.UpdatedDate), Parameter: nameof(Guest.UpdatedDate)));
+                Parameter: nameof(guest.UpdatedDate)));
         }
 
         private void ValidateGuestId(Guid guestId) =>
@@ -102,21 +101,18 @@ namespace Sheenam.Api.Services.Foundations.Guests
                 Message = $"Date is the same as {secondDateName}"
             };
 
-        private dynamic IsNotRecent(DateTimeOffset dateTimeOffset) => new
+        private dynamic IsNotRecent(DateTimeOffset date) => new
         {
-            Condition = IsDateNotRecent(dateTimeOffset),
+            Condition = IsDateNotRecent(date),
             Message = "Date is not recent"
         };
 
         private bool IsDateNotRecent(DateTimeOffset date)
         {
-            DateTimeOffset currentDateTime =
-                this.dateTimeBroker.GetCurrentDateTime();
-
+            DateTimeOffset currentDateTime = this.dateTimeBroker.GetCurrentDateTime();
             TimeSpan timeDifference = currentDateTime.Subtract(date);
-            TimeSpan oneMinute = TimeSpan.FromMinutes(1);
 
-            return timeDifference.Duration() > oneMinute;
+            return timeDifference.TotalSeconds is > 60 or < 0;
         }
 
         private static void Validate(params (dynamic Rule, string Parametr)[] validations)
