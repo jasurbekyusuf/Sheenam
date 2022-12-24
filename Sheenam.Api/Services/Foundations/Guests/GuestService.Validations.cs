@@ -28,6 +28,26 @@ namespace Sheenam.Api.Services.Foundations.Guests
         private void ValidateGuestOnModify(Guest guest)
         {
             ValidateGuestNotNull(guest);
+
+            Validate(
+                (Rule: IsInvalid(guest.Id), Parameter: nameof(Guest.Id)),
+                (Rule: IsInvalid(guest.FirstName), Parameter: nameof(Guest.FirstName)),
+                (Rule: IsInvalid(guest.LastName), Parameter: nameof(Guest.LastName)),
+                (Rule: IsInvalid(guest.DateOfBirth), Parameter: nameof(Guest.DateOfBirth)),
+                (Rule: IsInvalid(guest.Email), Parameter: nameof(Guest.Email)),
+                (Rule: IsInvalid(guest.Address), Parameter: nameof(Guest.Address)),
+                (Rule: IsInvalid(guest.Gender), Parameter: nameof(Guest.Gender)),
+                (Rule: IsInvalid(guest.CreatedDate), Parameter: nameof(Guest.CreatedDate)),
+                (Rule: IsInvalid(guest.UpdatedDate), Parameter: nameof(Guest.UpdatedDate)),
+
+                (Rule: IsSame(
+                    firstDate: guest.UpdatedDate,
+                    secondDate: guest.CreatedDate,
+                    secondDateName: nameof(Guest.CreatedDate)),
+
+                Parameter: nameof(Guest.UpdatedDate)),
+
+                (Rule: IsNotRecent(guest.UpdatedDate), Parameter: nameof(Guest.UpdatedDate)));
         }
 
         private void ValidateGuestId(Guid guestId) =>
@@ -72,6 +92,32 @@ namespace Sheenam.Api.Services.Foundations.Guests
             Condition = Enum.IsDefined(gender) is false,
             Message = "Value is invalid"
         };
+
+        private static dynamic IsSame(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
+            {
+                Condition = firstDate == secondDate,
+                Message = $"Date is the same as {secondDateName}"
+            };
+
+        private dynamic IsNotRecent(DateTimeOffset dateTimeOffset) => new
+        {
+            Condition = IsDateNotRecent(dateTimeOffset),
+            Message = "Date is not recent"
+        };
+
+        private bool IsDateNotRecent(DateTimeOffset date)
+        {
+            DateTimeOffset currentDateTime =
+                this.dateTimeBroker.GetCurrentDateTime();
+
+            TimeSpan timeDifference = currentDateTime.Subtract(date);
+            TimeSpan oneMinute = TimeSpan.FromMinutes(1);
+
+            return timeDifference.Duration() > oneMinute;
+        }
 
         private static void Validate(params (dynamic Rule, string Parametr)[] validations)
         {

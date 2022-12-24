@@ -15,27 +15,30 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
         [Fact]
         public async Task ShouldModifyGuestAsync()
         {
-            // given
+            //given
+            int randomNumber = GetRandomNumber();
+            int randomDays = randomNumber;
             DateTimeOffset randomDate = GetRandomDateTimeOffset();
-            Guest randomGuest = CreateRandomModifyGuest(randomDate);
+            Guest randomGuest = CreateRandomGuest();
             Guest inputGuest = randomGuest;
-            Guest storageGuest = inputGuest.DeepClone();
-            storageGuest.UpdatedDate = randomGuest.CreatedDate;
-            Guest updatedGuest = inputGuest;
-            Guest expectedGuest = updatedGuest.DeepClone();
-            Guid GuestId = inputGuest.Id;
+            Guest afterUpdateStorageGuest = inputGuest;
+            Guest expectedGuest = afterUpdateStorageGuest;
+            Guest beforeUpdateStorageGuest = randomGuest.DeepClone();
+
+            inputGuest.UpdatedDate = randomDate;
+            Guid guestId = inputGuest.Id;
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectGuestByIdAsync(guestId))
+                    .ReturnsAsync(beforeUpdateStorageGuest);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTime())
                     .Returns(randomDate);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectGuestByIdAsync(GuestId))
-                    .ReturnsAsync(storageGuest);
-
-            this.storageBrokerMock.Setup(broker =>
                 broker.UpdateGuestAsync(inputGuest))
-                    .ReturnsAsync(updatedGuest);
+                    .ReturnsAsync(afterUpdateStorageGuest);
 
             // when
             Guest actualGuest =
@@ -44,18 +47,21 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
             // then
             actualGuest.Should().BeEquivalentTo(expectedGuest);
 
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectGuestByIdAsync(guestId),
+                    Times.Once);
+
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTime(), Times.Never);
+                broker.GetCurrentDateTime(),
+                    Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectGuestByIdAsync(GuestId), Times.Once);
+                broker.UpdateGuestAsync(inputGuest),
+                    Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.UpdateGuestAsync(inputGuest), Times.Once);
-
+            this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }

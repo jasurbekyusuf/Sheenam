@@ -57,8 +57,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
                 FirstName = invalidString
             };
 
-            var invalidGuestException =
-                new InvalidGuestException();
+            var invalidGuestException = new InvalidGuestException();
 
             invalidGuestException.AddData(
                 key: nameof(Guest.Id),
@@ -73,6 +72,10 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
                 values: "Text is required");
 
             invalidGuestException.AddData(
+                key: nameof(Guest.DateOfBirth),
+                values: "Date is required");
+
+            invalidGuestException.AddData(
                 key: nameof(Guest.Email),
                 values: "Text is required");
 
@@ -81,16 +84,16 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
                 values: "Text is required");
 
             invalidGuestException.AddData(
-                key: nameof(Guest.CreatedDate),
-                values: "Value is required");
+               key: nameof(Guest.CreatedDate),
+               values: "Date is required");
 
             invalidGuestException.AddData(
                 key: nameof(Guest.UpdatedDate),
                     values: new[]
                     {
-                        "Value is required",
-                        "Date is not recent.",
-                        $"Date is the same as {nameof(Guest.CreatedDate)}"
+                        "Date is required",
+                        $"Date is the same as {nameof(Guest.CreatedDate)}",
+                        "Date is not recent"
                     }
                 );
 
