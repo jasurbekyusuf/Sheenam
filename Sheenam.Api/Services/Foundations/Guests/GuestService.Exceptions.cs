@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Sheenam.Api.Models.Foundations.Guests;
 using Sheenam.Api.Models.Foundations.Guests.Exceptions;
 using Xeptions;
@@ -49,6 +50,12 @@ namespace Sheenam.Api.Services.Foundations.Guests
 
                 throw CreateAndLogDependencyValidation(alreadyExistGuestException);
             }
+            catch (DbUpdateException databaseUpdateException)
+            {
+                var failedGuestStorageException = new FailedGuestStorageException(databaseUpdateException);
+
+                throw CreateAndLogDependencyException(failedGuestStorageException);
+            }
             catch (Exception exception)
             {
                 var failedGuestServiceException =
@@ -76,6 +83,14 @@ namespace Sheenam.Api.Services.Foundations.Guests
 
                 throw CreateAndLogServiceException(failedGuestServiceException);
             }
+        }
+
+        private GuestDependencyException CreateAndLogDependencyException(Xeption exception)
+        {
+            var guestDependencyException = new GuestDependencyException(exception);
+            this.loggingBroker.LogError(guestDependencyException);
+
+            return guestDependencyException;
         }
 
         private GuestValidationException CreateAndLogValidationException(Xeption exeption)
