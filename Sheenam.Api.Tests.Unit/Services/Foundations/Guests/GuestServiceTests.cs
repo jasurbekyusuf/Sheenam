@@ -20,20 +20,20 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
     public partial class GuestServiceTests
     {
         private readonly Mock<IStorageBroker> storageBrokerMock;
-        private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
+        private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly IGuestService guestService;
 
         public GuestServiceTests()
         {
             this.storageBrokerMock = new Mock<IStorageBroker>();
-            this.loggingBrokerMock = new Mock<ILoggingBroker>();
             this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
+            this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
             this.guestService = new GuestService(
                 storageBroker: this.storageBrokerMock.Object,
-                loggingBroker: this.loggingBrokerMock.Object,
-                dateTimeBroker: this.dateTimeBrokerMock.Object);
+                dateTimeBroker: this.dateTimeBrokerMock.Object,
+                loggingBroker: this.loggingBrokerMock.Object);
         }
 
         public static TheoryData<int> InvalidSeconds()
@@ -54,7 +54,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
         }
 
         private static Guest CreateRandomGuest(DateTimeOffset dates) =>
-            CreateGuestFiller(dates: GetRandomDateTimeOffset()).Create();
+            CreateGuestFiller(dates).Create();
 
         private static Guest CreateRandomGuest() =>
             CreateGuestFiller(GetRandomDateTimeOffset()).Create();
@@ -79,7 +79,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
             new DateTimeRange(earliestDate: DateTime.UnixEpoch).GetValue();
 
         private static int GetRandomNumber() =>
-            new IntRange(min: 2, max: 9).GetValue();
+            new IntRange(min: 2, max: 99).GetValue();
 
         private static int GetRandomNegativeNumber() =>
             -1 * new IntRange(min: 2, max: 10).GetValue();
