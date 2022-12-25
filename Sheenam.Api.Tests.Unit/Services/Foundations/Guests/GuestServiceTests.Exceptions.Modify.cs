@@ -116,5 +116,58 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowDependencyValidationExceptionOnModifyIfDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
+        {
+            // given
+            int minutesInPast = GetRandomNegativeNumber();
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            Guest randomGuest = CreateRandomGuest(randomDateTime);
+            Guest someGuest = randomGuest;
+            someGuest.CreatedDate = randomDateTime.AddMinutes(minutesInPast);
+            Guid guestId = someGuest.Id;
+            var databaseUpdateConcurrencyException = new DbUpdateConcurrencyException();
+
+            var lockedGuestException =
+                new LockedGuestException(databaseUpdateConcurrencyException);
+
+            var expectedGuestDependencyValidationException =
+                new GuestDependencyValidationException(lockedGuestException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectGuestByIdAsync(guestId))
+                    .ThrowsAsync(databaseUpdateConcurrencyException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTime())
+                    .Returns(randomDateTime);
+
+            // when
+            ValueTask<Guest> modifyGuestTask =
+                this.guestService.ModifyGuestAsync(someGuest);
+
+            GuestDependencyValidationException actualGuestDependencyValidationException =
+                await Assert.ThrowsAsync<GuestDependencyValidationException>(
+                    modifyGuestTask.AsTask);
+
+            // then
+            actualGuestDependencyValidationException.Should().BeEquivalentTo(
+                expectedGuestDependencyValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectGuestByIdAsync(guestId), Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTime(), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGuestDependencyValidationException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
