@@ -3,6 +3,7 @@
 // Free To Use To Find Comfort and Pease
 //===================================================
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -68,6 +69,33 @@ namespace Sheenam.Api.Controllers
             catch (GuestDependencyException guestDependencyException)
             {
                 return InternalServerError(guestDependencyException.InnerException);
+            }
+            catch (GuestServiceException guestServiceException)
+            {
+                return InternalServerError(guestServiceException.InnerException);
+            }
+        }
+
+        [HttpGet("{guestId}")]
+        public async ValueTask<ActionResult<Guest>> GetGuestTicketByIdAsync(Guid guestId)
+        {
+            try
+            {
+                return await this.guestService.RetrieveGuestByIdAsync(guestId);
+            }
+            catch (GuestDependencyException guestDependencyException)
+            {
+                return InternalServerError(guestDependencyException.InnerException);
+            }
+            catch (GuestValidationException guestValidationException)
+                when (guestValidationException.InnerException is InvalidGuestException)
+            {
+                return BadRequest(guestValidationException.InnerException);
+            }
+            catch (GuestValidationException guestValidationException)
+                when (guestValidationException.InnerException is NotFoundGuestException)
+            {
+                return NotFound(guestValidationException.InnerException);
             }
             catch (GuestServiceException guestServiceException)
             {
