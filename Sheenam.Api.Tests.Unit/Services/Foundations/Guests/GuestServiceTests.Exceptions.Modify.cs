@@ -5,6 +5,7 @@
 
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using Sheenam.Api.Models.Foundations.Guests;
 using Sheenam.Api.Models.Foundations.Guests.Exceptions;
@@ -20,7 +21,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
             DateTimeOffset someDateTime = GetRandomDateTimeOffset();
             Guest randomGuest = CreateRandomGuest(someDateTime);
             Guest someGuest = randomGuest;
-            Guid GuestId = someGuest.Id;
+            Guid guestId = someGuest.Id;
             SqlException sqlException = CreateSqlException();
 
             var failedGuestStorageException =
@@ -53,7 +54,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
                     expectedGuestDependencyException))), Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectGuestByIdAsync(GuestId), Times.Never);
+                broker.SelectGuestByIdAsync(guestId), Times.Never);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdateGuestAsync(someGuest), Times.Never);
@@ -61,6 +62,59 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnModifyIfDatabaseUpdateExceptionOccursAndLogItAsync()
+        {
+            // given
+            int minutesInPast = GetRandomNegativeNumber();
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            Guest randomGuest = CreateRandomGuest(randomDateTime);
+            Guest someGuest = randomGuest;
+            Guid guestId = someGuest.Id;
+            someGuest.CreatedDate = randomDateTime.AddMinutes(minutesInPast);
+            var databaseUpdateException = new DbUpdateException();
+
+            var failedGuestException =
+                new FailedGuestStorageException(databaseUpdateException);
+
+            var expectedGuestDependencyException =
+                new GuestDependencyException(failedGuestException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectGuestByIdAsync(guestId))
+                    .ThrowsAsync(databaseUpdateException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTime())
+                    .Returns(randomDateTime);
+
+            // when
+            ValueTask<Guest> modifyGuestTask =
+                this.guestService.ModifyGuestAsync(someGuest);
+
+            GuestDependencyException actualGuestDependencyException =
+                 await Assert.ThrowsAsync<GuestDependencyException>(
+                     modifyGuestTask.AsTask);
+
+            // then
+            actualGuestDependencyException.Should().BeEquivalentTo(
+                expectedGuestDependencyException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectGuestByIdAsync(guestId), Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTime(), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGuestDependencyException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
