@@ -50,6 +50,12 @@ namespace Sheenam.Api.Services.Foundations.Guests
 
                 throw CreateAndLogDependencyValidation(alreadyExistGuestException);
             }
+            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            {
+                var lockedGuestException = new LockedGuestException(dbUpdateConcurrencyException);
+
+                throw CreateAndDependencyValidationException(lockedGuestException);
+            }
             catch (DbUpdateException databaseUpdateException)
             {
                 var failedGuestStorageException = new FailedGuestStorageException(databaseUpdateException);
@@ -107,7 +113,16 @@ namespace Sheenam.Api.Services.Foundations.Guests
         {
             var guesDepencyException = new GuestDependencyException(exeption);
             this.loggingBroker.LogCritical(guesDepencyException);
+
             return guesDepencyException;
+        }
+
+        private GuestDependencyValidationException CreateAndDependencyValidationException(Xeption exception)
+        {
+            var guestDependencyValidationException = new GuestDependencyValidationException(exception);
+            this.loggingBroker.LogError(guestDependencyValidationException);
+
+            return guestDependencyValidationException;
         }
 
         private GuestDependencyValidationException CreateAndLogDependencyValidation(
