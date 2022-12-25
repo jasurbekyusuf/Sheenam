@@ -136,5 +136,43 @@ namespace Sheenam.Api.Controllers
                 return InternalServerError(guestServiceException);
             }
         }
+
+        [HttpDelete("{guestId}")]
+        public async ValueTask<ActionResult<Guest>> DeleteGuestByIdAsync(Guid postId)
+        {
+            try
+            {
+                Guest deletedGuest =
+                    await this.guestService.RemoveGuestByIdAsync(postId);
+
+                return Ok(deletedGuest);
+            }
+            catch (GuestValidationException guestValidationException)
+                when (guestValidationException.InnerException is NotFoundGuestException)
+            {
+                return NotFound(guestValidationException.InnerException);
+            }
+            catch (GuestValidationException guestValidationException)
+            {
+                return BadRequest(guestValidationException.InnerException);
+            }
+            catch (GuestDependencyValidationException guestDependencyValidationException)
+                when (guestDependencyValidationException.InnerException is LockedGuestException)
+            {
+                return Locked(guestDependencyValidationException.InnerException);
+            }
+            catch (GuestDependencyValidationException guestDependencyValidationException)
+            {
+                return BadRequest(guestDependencyValidationException);
+            }
+            catch (GuestDependencyException GuestDependencyException)
+            {
+                return InternalServerError(GuestDependencyException);
+            }
+            catch (GuestServiceException guestServiceException)
+            {
+                return InternalServerError(guestServiceException);
+            }
+        }
     }
 }
