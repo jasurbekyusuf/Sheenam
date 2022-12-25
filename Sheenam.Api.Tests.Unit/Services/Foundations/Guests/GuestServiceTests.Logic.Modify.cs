@@ -23,14 +23,14 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
             storageGuest.UpdatedDate = randomGuest.CreatedDate;
             Guest updatedGuest = inputGuest;
             Guest expectedGuest = updatedGuest.DeepClone();
-            Guid GuestId = inputGuest.Id;
+            Guid guestId = inputGuest.Id;
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTime())
                     .Returns(randomDate);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectGuestByIdAsync(GuestId))
+                broker.SelectGuestByIdAsync(guestId))
                     .ReturnsAsync(storageGuest);
 
             this.storageBrokerMock.Setup(broker =>
@@ -48,7 +48,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
                 broker.GetCurrentDateTime(), Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectGuestByIdAsync(GuestId), Times.Once);
+                broker.SelectGuestByIdAsync(guestId), Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdateGuestAsync(inputGuest), Times.Once);

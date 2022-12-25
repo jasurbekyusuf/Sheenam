@@ -6,29 +6,27 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.VisualBasic;
 using Sheenam.Api.Brokers.DateTimes;
 using Sheenam.Api.Brokers.Loggings;
 using Sheenam.Api.Brokers.Storages;
 using Sheenam.Api.Models.Foundations.Guests;
-using static DotNetOpenAuth.OpenId.Extensions.AttributeExchange.WellKnownAttributes;
 
 namespace Sheenam.Api.Services.Foundations.Guests
 {
     public partial class GuestService : IGuestService
     {
         private readonly IStorageBroker storageBroker;
-        private readonly ILoggingBroker loggingBroker;
         private readonly IDateTimeBroker dateTimeBroker;
+        private readonly ILoggingBroker loggingBroker;
 
         public GuestService(
             IStorageBroker storageBroker,
-            ILoggingBroker loggingBroker,
-            IDateTimeBroker dateTimeBroker)
+            IDateTimeBroker dateTimeBroker,
+            ILoggingBroker loggingBroker)
         {
             this.storageBroker = storageBroker;
-            this.loggingBroker = loggingBroker;
             this.dateTimeBroker = dateTimeBroker;
+            this.loggingBroker = loggingBroker;
         }
 
         public ValueTask<Guest> AddGuestAsync(Guest guest) =>
@@ -61,7 +59,7 @@ namespace Sheenam.Api.Services.Foundations.Guests
 
             var maybeGuest = await this.storageBroker.SelectGuestByIdAsync(guest.Id);
 
-            ValidateAgainstStorageGuestOnModify(inputGuest: guest , storageGuest: maybeGuest);
+            ValidateAgainstStorageGuestOnModify(inputGuest: guest, storageGuest: maybeGuest);
 
             return await this.storageBroker.UpdateGuestAsync(guest);
         });

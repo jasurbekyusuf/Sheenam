@@ -31,8 +31,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
                 new GuestDependencyException(failedGuestStorageException);
 
             this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTime())
-                    .Throws(sqlException);
+                broker.GetCurrentDateTime()).Throws(sqlException);
 
             // when
             ValueTask<Guest> modifyGuestTask =
@@ -87,8 +86,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
                     .ThrowsAsync(databaseUpdateException);
 
             this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTime())
-                    .Returns(randomDateTime);
+                broker.GetCurrentDateTime()).Returns(randomDateTime);
 
             // when
             ValueTask<Guest> modifyGuestTask =
@@ -187,12 +185,10 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
                 new GuestServiceException(failedGuestException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectGuestByIdAsync(someGuest.Id))
-                    .ThrowsAsync(serviceException);
+                broker.SelectGuestByIdAsync(someGuest.Id)).ThrowsAsync(serviceException);
 
             this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTime())
-                    .Returns(randomDateTime);
+                broker.GetCurrentDateTime()).Returns(randomDateTime);
 
             // when
             ValueTask<Guest> modifyGuestTask =

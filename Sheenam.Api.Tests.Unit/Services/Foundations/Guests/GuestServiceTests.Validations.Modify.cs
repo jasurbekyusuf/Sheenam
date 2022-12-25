@@ -42,8 +42,8 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
                 broker.UpdateGuestAsync(It.IsAny<Guest>()), Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
         [Theory]
@@ -123,7 +123,6 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedGuestValidationException))), Times.Once);
-
 
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdateGuestAsync(It.IsAny<Guest>()), Times.Never);
@@ -345,7 +344,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
                 new GuestValidationException(invalidGuestException);
 
             this.storageBrokerMock.Setup(broker =>
-               broker.SelectGuestByIdAsync(invalidGuest.Id)).ReturnsAsync(storageGuest);
+                broker.SelectGuestByIdAsync(invalidGuest.Id)).ReturnsAsync(storageGuest);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTime()).Returns(randomDateTime);
