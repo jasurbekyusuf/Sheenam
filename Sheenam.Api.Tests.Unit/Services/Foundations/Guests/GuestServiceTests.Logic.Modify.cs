@@ -40,24 +40,20 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
                 broker.UpdateGuestAsync(inputGuest))
                     .ReturnsAsync(afterUpdateStorageGuest);
 
-            // when
-            Guest actualGuest =
-                await this.guestService.ModifyGuestAsync(inputGuest);
+            //when
+            Guest actualGuest = await this.guestService.ModifyGuestAsync(inputGuest);
 
-            // then
+            //then
             actualGuest.Should().BeEquivalentTo(expectedGuest);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectGuestByIdAsync(guestId),
-                    Times.Once);
+                broker.SelectGuestByIdAsync(guestId), Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTime(),
-                    Times.Never);
+                broker.GetCurrentDateTime(), Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.UpdateGuestAsync(inputGuest),
-                    Times.Once);
+                broker.UpdateGuestAsync(inputGuest), Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();

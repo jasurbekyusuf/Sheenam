@@ -92,6 +92,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
                     values: new[]
                     {
                         "Date is required",
+                        "Date is not recent",
                         $"Date is the same as {nameof(Guest.CreatedDate)}"
                     }
                 );
@@ -116,7 +117,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
                 .BeEquivalentTo(expectedGuestValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTime(), Times.Never);
+                broker.GetCurrentDateTime(), Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
@@ -161,7 +162,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
                 expectedGuestValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTime(), Times.Never);
+                broker.GetCurrentDateTime(), Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(expectedGuestValidationException))), Times.Once);

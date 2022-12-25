@@ -61,6 +61,8 @@ namespace Sheenam.Api.Services.Foundations.Guests
 
             var maybeGuest = await this.storageBroker.SelectGuestByIdAsync(guest.Id);
 
+            ValidateAgainstStorageGuestOnModify(inputGuest: guest , storageGuest: maybeGuest);
+
             return await this.storageBroker.UpdateGuestAsync(guest);
         });
     }

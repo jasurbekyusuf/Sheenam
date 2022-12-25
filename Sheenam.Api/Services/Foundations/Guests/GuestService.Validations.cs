@@ -39,26 +39,45 @@ namespace Sheenam.Api.Services.Foundations.Guests
                 (Rule: IsInvalid(guest.Gender), Parameter: nameof(Guest.Gender)),
                 (Rule: IsInvalid(guest.CreatedDate), Parameter: nameof(Guest.CreatedDate)),
                 (Rule: IsInvalid(guest.UpdatedDate), Parameter: nameof(Guest.UpdatedDate)),
-                //(Rule: IsNotRecent(guest.UpdatedDate), Parameter: nameof(Guest.UpdatedDate)),
+                (Rule: IsNotRecent(guest.UpdatedDate), Parameter: nameof(Guest.UpdatedDate)),
 
                 (Rule: IsSame(
                     firstDate: guest.UpdatedDate,
                     secondDate: guest.CreatedDate,
-                    secondDateName: nameof(guest.CreatedDate)),
+                    secondDateName: nameof(Guest.CreatedDate)),
 
-                Parameter: nameof(guest.UpdatedDate)));
+                Parameter: nameof(Guest.UpdatedDate)));
         }
 
-        private void ValidateGuestId(Guid guestId) =>
-            Validate((Rule: IsInvalid(guestId), Parameter: nameof(Guest.Id)));
-
-        private void ValidateStorageGuest(Guest maybeGuest, Guid guestId)
+        private static void ValidateStorageGuest(Guest maybeGuest, Guid guestId)
         {
             if (maybeGuest is null)
             {
                 throw new NotFoundGuestException(guestId);
             }
         }
+
+        private static void ValidateAgainstStorageGuestOnModify(Guest inputGuest, Guest storageGuest)
+        {
+            ValidateStorageGuest(storageGuest, inputGuest.Id);
+
+            Validate(
+                (Rule: IsNotSame(
+                    firstDate: inputGuest.CreatedDate,
+                    secondDate: storageGuest.CreatedDate,
+                    secondDateName: nameof(Guest.CreatedDate)),
+                Parameter: nameof(Guest.CreatedDate)),
+
+                (Rule: IsSame(
+                        firstDate: inputGuest.UpdatedDate,
+                        secondDate: storageGuest.UpdatedDate,
+                        secondDateName: nameof(Guest.UpdatedDate)),
+                Parameter: nameof(Guest.UpdatedDate)));
+        }
+
+        private void ValidateGuestId(Guid guestId) =>
+            Validate((Rule: IsInvalid(guestId), Parameter: nameof(Guest.Id)));
+
 
         private void ValidateGuestNotNull(Guest guest)
         {
@@ -99,6 +118,15 @@ namespace Sheenam.Api.Services.Foundations.Guests
             {
                 Condition = firstDate == secondDate,
                 Message = $"Date is the same as {secondDateName}"
+            };
+
+        private static dynamic IsNotSame
+            (DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
+            {
+                Condition = firstDate != secondDate,
+                Message = $"Date is not same as {secondDateName}."
             };
 
         private dynamic IsNotRecent(DateTimeOffset date) => new
