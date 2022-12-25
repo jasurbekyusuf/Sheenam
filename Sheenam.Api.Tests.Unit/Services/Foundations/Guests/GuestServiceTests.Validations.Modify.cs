@@ -133,7 +133,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
         }
 
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsNotSameAsCreatedDateAndLogItAsync()
+        public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsSameAsCreatedDateAndLogItAsync()
         {
             //given
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
@@ -220,6 +220,54 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Guests
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfGuestDoesNotExistAndLogItAsync()
+        {
+            // given
+            int randomNegativeMinutes = GetRandomNegativeNumber();
+            DateTimeOffset dateTime = GetRandomDateTimeOffset();
+            Guest randomGuest = CreateRandomGuest(dateTime);
+            Guest nonExistGuest = randomGuest;
+            nonExistGuest.CreatedDate = dateTime.AddMinutes(randomNegativeMinutes);
+            Guest nullGuest = null;
+
+            var notFoundGuestException =
+                new NotFoundGuestException(nonExistGuest.Id);
+
+            var expectedGuestValidationException =
+                new GuestValidationException(notFoundGuestException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectGuestByIdAsync(nonExistGuest.Id)).ReturnsAsync(nullGuest);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTime()).Returns(dateTime);
+
+            // when 
+            ValueTask<Guest> modifyGuestTask =
+                this.guestService.ModifyGuestAsync(nonExistGuest);
+
+            GuestValidationException actualGuestValidationException =
+               await Assert.ThrowsAsync<GuestValidationException>(modifyGuestTask.AsTask);
+
+            // then
+            actualGuestValidationException.Should().BeEquivalentTo(expectedGuestValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectGuestByIdAsync(nonExistGuest.Id), Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTime(), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGuestValidationException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
