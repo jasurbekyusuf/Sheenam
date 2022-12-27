@@ -21,5 +21,7 @@ namespace Sheenam.Api.Models.Foundations.Homes
         public double Area { get; set; }
         public decimal Price { get; set; }
         public HouseType Type { get; set; }
+        public DateTimeOffset CreatedDate { get; set; }
+        public DateTimeOffset UpdatedDate { get; set; }
     }
 }
