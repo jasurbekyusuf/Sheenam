@@ -9,8 +9,7 @@ namespace Sheenam.Api.Models.Foundations.Hosts.Exceptions
 {
     public class InvalidHostException : Xeption
     {
-        public InvalidHostException()
-            : base(message: "Host is invalid.")
+        public InvalidHostException() : base(message: "Host is invalid.")
         { }
     }
 }
