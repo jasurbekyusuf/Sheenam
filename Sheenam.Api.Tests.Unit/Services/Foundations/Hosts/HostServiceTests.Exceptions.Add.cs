@@ -54,11 +54,11 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
             string someMessage = GetRandomString();
             var duplicateKeyException = new DuplicateKeyException(someMessage);
 
-            var failedHostDependencyValidationException =
-                new FailedHostDependencyValidationException(duplicateKeyException);
+            var alreadyExistsHostException =
+                new AlreadyExistsHostException(duplicateKeyException);
 
             var expectedHostDependencyValidationException =
-                new HostDependencyValidationException(failedHostDependencyValidationException);
+                new HostDependencyValidationException(alreadyExistsHostException);
 
             this.storageBrokerMock.Setup(broker => broker.InsertHostAsync(It.IsAny<Host>()))
                 .ThrowsAsync(duplicateKeyException);

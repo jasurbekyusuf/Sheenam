@@ -38,10 +38,10 @@ namespace Sheenam.Api.Services.Foundations.Hosts
             }
             catch (DuplicateKeyException duplicateKeyException)
             {
-                var failedHostDependencyValidationException =
-                     new FailedHostDependencyValidationException(duplicateKeyException);
+                var alreadyExistsHostException =
+                     new AlreadyExistsHostException(duplicateKeyException);
 
-                throw CreateAndDependencyValidationException(failedHostDependencyValidationException);
+                throw CreateAndDependencyValidationException(alreadyExistsHostException);
             }
         }
 
