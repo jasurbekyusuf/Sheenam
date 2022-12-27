@@ -204,5 +204,44 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnAddIfEnumsAreInvalidAndLogItAsync()
+        {
+            // given
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            Host randomHost = CreateRandomHost(randomDateTime);
+            Host invalidHost = randomHost;
+            invalidHost.Gender = GetInvalidEnum<GenderType>();
+            var invalidHostException = new InvalidHostException();
+            invalidHostException.AddData(
+                key: nameof(Host.Gender), values: "Value is not recognized");
+
+            var expectedHostValidationException = new HostValidationException(invalidHostException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTime()).Returns(randomDateTime);
+
+            // when
+            ValueTask<Host> addHostTask = this.hostService.AddHostAsync(invalidHost);
+
+            HostValidationException actualHostValidationException =
+                await Assert.ThrowsAsync<HostValidationException>(addHostTask.AsTask);
+
+            // then
+            actualHostValidationException.Should().BeEquivalentTo(expectedHostValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker => broker.GetCurrentDateTime(), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker => broker.LogError(
+                It.Is(SameExceptionAs(expectedHostValidationException))), Times.Once);
+
+            this.storageBrokerMock.Verify(broker => broker.InsertHostAsync(
+                It.IsAny<Host>()), Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
