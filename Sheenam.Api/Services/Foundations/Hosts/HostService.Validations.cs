@@ -11,7 +11,7 @@ namespace Sheenam.Api.Services.Foundations.Hosts
 {
     public partial class HostService
     {
-        private static void ValidateHost(Host host)
+        private void ValidateHost(Host host)
         {
             ValidateHostNotNull(host);
             Validate(
@@ -23,6 +23,7 @@ namespace Sheenam.Api.Services.Foundations.Hosts
                 (Rule: IsInvalid(host.PhoneNumber), Parameter: nameof(Host.PhoneNumber)),
                 (Rule: IsInvalid(host.CreatedDate), Parameter: nameof(Host.CreatedDate)),
                 (Rule: IsInvalid(host.UpdatedDate), Parameter: nameof(Host.UpdatedDate)),
+                (Rule: IsNotRecent(host.CreatedDate), Parameter: nameof(Host.CreatedDate)),
 
                 (Rule: IsNotSame(
                     firstDate: host.CreatedDate,
@@ -58,6 +59,20 @@ namespace Sheenam.Api.Services.Foundations.Hosts
                 Condition = firstDate != secondDate,
                 Message = $"Date is not same as {secondDateName}"
             };
+
+        private dynamic IsNotRecent(DateTimeOffset date) => new
+        {
+            Condition = IsDateNotRecent(date),
+            Message = "Date is not recent"
+        };
+
+        private bool IsDateNotRecent(DateTimeOffset date)
+        {
+            DateTimeOffset currentDateTime = this.dateTimeBroker.GetCurrentDateTime();
+            TimeSpan timeDifference = currentDateTime.Subtract(date);
+
+            return timeDifference.TotalSeconds is > 60 or < 0;
+        }
 
         private static void ValidateHostNotNull(Host host)
         {
