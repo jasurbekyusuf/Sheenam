@@ -41,7 +41,7 @@ namespace Sheenam.Api.Services.Foundations.Hosts
                 var failedHostDependencyValidationException =
                      new FailedHostDependencyValidationException(duplicateKeyException);
 
-                throw CreateAndDependensyValidationException(failedHostDependencyValidationException);
+                throw CreateAndDependencyValidationException(failedHostDependencyValidationException);
             }
         }
 
@@ -61,7 +61,7 @@ namespace Sheenam.Api.Services.Foundations.Hosts
             return hostDependencyException;
         }
 
-        private HostDependencyValidationException CreateAndDependensyValidationException(Xeption exception)
+        private HostDependencyValidationException CreateAndDependencyValidationException(Xeption exception)
         {
             var hostDependencyValidationException = new HostDependencyValidationException(exception);
             this.loggingBroker.LogError(hostDependencyValidationException);
