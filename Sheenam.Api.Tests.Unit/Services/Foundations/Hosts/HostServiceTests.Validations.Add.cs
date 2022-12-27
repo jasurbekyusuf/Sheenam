@@ -118,8 +118,9 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
         public async Task ShouldThrowValidationExceptionOnAddIfCreatedDateIsNotSameAsUpdatedDateAndLogItAsync()
         {
             // given
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
             DateTimeOffset anotherRandomDate = GetRandomDateTimeOffset();
-            Host randomHost = CreateRandomHost();
+            Host randomHost = CreateRandomHost(randomDateTime);
             Host invalidHost = randomHost;
             invalidHost.UpdatedDate = anotherRandomDate;
             var invalidHostException = new InvalidHostException();
@@ -131,6 +132,9 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
             var expectedHostValidationException =
                 new HostValidationException(invalidHostException);
 
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTime()).Returns(randomDateTime);
+
             // when
             ValueTask<Host> addHostTask = this.hostService.AddHostAsync(invalidHost);
 
@@ -140,12 +144,16 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
             // then
             actualHostValidationException.Should().BeEquivalentTo(expectedHostValidationException);
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTime(), Times.Once);
+
             this.loggingBrokerMock.Verify(broker => broker.LogError(
                 It.Is(SameExceptionAs(expectedHostValidationException))), Times.Once);
 
             this.storageBrokerMock.Verify(broker => broker.InsertHostAsync(
                 It.IsAny<Host>()), Times.Never);
 
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
