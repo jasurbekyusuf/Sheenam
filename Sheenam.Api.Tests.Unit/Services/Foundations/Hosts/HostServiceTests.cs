@@ -7,6 +7,7 @@ using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using Microsoft.Data.SqlClient;
 using Moq;
+using Sheenam.Api.Brokers.DateTimes;
 using Sheenam.Api.Brokers.Loggings;
 using Sheenam.Api.Brokers.Storages;
 using Sheenam.Api.Models.Foundations.Hosts;
@@ -19,16 +20,19 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
     public partial class HostServiceTests
     {
         private readonly Mock<IStorageBroker> storageBrokerMock;
+        private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly IHostService hostService;
 
         public HostServiceTests()
         {
             this.storageBrokerMock = new Mock<IStorageBroker>();
+            this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
             this.hostService = new HostService(
                 storageBroker: this.storageBrokerMock.Object,
+                dateTimeBroker: this.dateTimeBrokerMock.Object,
                 loggingBroker: this.loggingBrokerMock.Object);
         }
 
@@ -61,13 +65,15 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
         private static SqlException CreateSqlException() =>
             (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
 
-        private static Host CreateRandomHost() =>
-            CreateHostFiller().Create();
+        private static Host CreateRandomHost(DateTimeOffset dates) =>
+            CreateHostFiller(dates).Create();
 
-        private static Filler<Host> CreateHostFiller()
+        private static Host CreateRandomHost() =>
+            CreateHostFiller(GetRandomDateTimeOffset()).Create();
+
+        private static Filler<Host> CreateHostFiller(DateTimeOffset dates)
         {
             var filler = new Filler<Host>();
-            DateTimeOffset dates = GetRandomDateTimeOffset();
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dates);

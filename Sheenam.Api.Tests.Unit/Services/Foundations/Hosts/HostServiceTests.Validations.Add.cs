@@ -157,11 +157,44 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
         {
             // given
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            DateTimeOffset invalidRandomDateTime = randomDateTime.AddSeconds(invalidSeconds);
+            Host randomInvalidHost = CreateRandomHost(invalidRandomDateTime);
+            Host invalidHost = randomInvalidHost;
+            var invalidHostException = new InvalidHostException();
 
+            invalidHostException.AddData(
+                key: nameof(Host.CreatedDate),
+                values: "Date is not recent");
+
+            var expectedHostValidationException =
+                new HostValidationException(invalidHostException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTime()).Returns(randomDateTime);
 
             // when
+            ValueTask<Host> addHostTask = this.hostService.AddHostAsync(invalidHost);
+
+            HostValidationException actualHostValidationException =
+                await Assert.ThrowsAsync<HostValidationException>(addHostTask.AsTask);
 
             // then
+            actualHostValidationException.Should().BeEquivalentTo(
+                expectedHostValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTime(), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedHostValidationException))), Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertHostAsync(It.IsAny<Host>()), Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
