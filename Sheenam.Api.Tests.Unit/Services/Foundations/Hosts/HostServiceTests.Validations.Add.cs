@@ -113,5 +113,41 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnAddIfCreatedDateIsNotSameAsUpdatedDateAndLogItAsync()
+        {
+            // given
+            DateTimeOffset anotherRandomDate = GetRandomDateTimeOffset();
+            Host randomHost = CreateRandomHost();
+            Host invalidHost = randomHost;
+            invalidHost.UpdatedDate = anotherRandomDate;
+            var invalidHostException = new InvalidHostException();
+
+            invalidHostException.AddData(
+                key: nameof(Host.CreatedDate),
+                values: $"Date is not same as {nameof(Host.UpdatedDate)}");
+
+            var expectedHostValidationException =
+                new HostValidationException(invalidHostException);
+
+            // when
+            ValueTask<Host> addHostTask = this.hostService.AddHostAsync(invalidHost);
+
+            HostValidationException actualHostValidationException =
+                await Assert.ThrowsAsync<HostValidationException>(addHostTask.AsTask);
+
+            // then
+            actualHostValidationException.Should().BeEquivalentTo(expectedHostValidationException);
+
+            this.loggingBrokerMock.Verify(broker => broker.LogError(
+                It.Is(SameExceptionAs(expectedHostValidationException))), Times.Once);
+
+            this.storageBrokerMock.Verify(broker => broker.InsertHostAsync(
+                It.IsAny<Host>()), Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
