@@ -21,6 +21,7 @@ namespace Sheenam.Api.Services.Foundations.Hosts
                 (Rule: IsInvalid(host.DateOfBirth), Parameter: nameof(Host.DateOfBirth)),
                 (Rule: IsInvalid(host.Email), Parameter: nameof(Host.Email)),
                 (Rule: IsInvalid(host.PhoneNumber), Parameter: nameof(Host.PhoneNumber)),
+                (Rule: IsInvalid(host.GenderType), Parameter: nameof(Host.GenderType)),
                 (Rule: IsInvalid(host.CreatedDate), Parameter: nameof(Host.CreatedDate)),
                 (Rule: IsInvalid(host.UpdatedDate), Parameter: nameof(Host.UpdatedDate)),
                 (Rule: IsNotRecent(host.CreatedDate), Parameter: nameof(Host.CreatedDate)),
@@ -51,6 +52,12 @@ namespace Sheenam.Api.Services.Foundations.Hosts
             Message = "Value is required"
         };
 
+        private static dynamic IsInvalid<T>(T value) => new
+        {
+            Condition = IsEnumInvalid(value),
+            Message = "Value is not recognized"
+        };
+
         private static dynamic IsNotSame(
             DateTimeOffset firstDate,
             DateTimeOffset secondDate,
@@ -59,6 +66,13 @@ namespace Sheenam.Api.Services.Foundations.Hosts
                 Condition = firstDate != secondDate,
                 Message = $"Date is not same as {secondDateName}"
             };
+
+        private static bool IsEnumInvalid<T>(T value)
+        {
+            bool isDefined = Enum.IsDefined(typeof(T), value);
+
+            return isDefined is false;
+        }
 
         private dynamic IsNotRecent(DateTimeOffset date) => new
         {

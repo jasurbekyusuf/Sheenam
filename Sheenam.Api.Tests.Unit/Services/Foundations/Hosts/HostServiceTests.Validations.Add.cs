@@ -212,10 +212,10 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
             Host randomHost = CreateRandomHost(randomDateTime);
             Host invalidHost = randomHost;
-            invalidHost.Gender = GetInvalidEnum<GenderType>();
+            invalidHost.GenderType = GetInvalidEnum<GenderType>();
             var invalidHostException = new InvalidHostException();
             invalidHostException.AddData(
-                key: nameof(Host.Gender), values: "Value is not recognized");
+                key: nameof(Host.GenderType), values: "Value is not recognized");
 
             var expectedHostValidationException = new HostValidationException(invalidHostException);
 
