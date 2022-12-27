@@ -6,6 +6,7 @@
 using EFxceptions.Models.Exceptions;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using Sheenam.Api.Models.Foundations.Hosts;
 using Sheenam.Api.Models.Foundations.Hosts.Exceptions;
@@ -78,6 +79,37 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
 
             this.loggingBrokerMock.Verify(broker => broker.LogError(It.Is(SameExceptionAs(
                 expectedHostDependencyValidationException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyValidationExceptionOnAddIfDbConcurrencyErrorOccursAndLogItAsync()
+        {
+            // given
+            Host someHost = CreateRandomHost();
+            var dbUpdateConcurrencyException = new DbUpdateConcurrencyException();
+
+            var lockedHostException = new LockedHostException(dbUpdateConcurrencyException);
+            var expectedHostDependencyValidationException = new HostDependencyValidationException(lockedHostException);
+
+            this.storageBrokerMock.Setup(broker => broker.InsertHostAsync(It.IsAny<Host>()))
+                .ThrowsAsync(dbUpdateConcurrencyException);
+
+            // when
+            ValueTask<Host> addHostTask = this.hostService.AddHostAsync(someHost);
+
+            HostDependencyValidationException actualHostDependencyValidationException =
+                 await Assert.ThrowsAsync<HostDependencyValidationException>(addHostTask.AsTask);
+
+            // then
+            actualHostDependencyValidationException.Should().BeEquivalentTo(expectedHostDependencyValidationException);
+
+            this.storageBrokerMock.Verify(broker => broker.InsertHostAsync(It.IsAny<Host>()), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker => broker.LogError(It.Is(
+                SameExceptionAs(expectedHostDependencyValidationException))), Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

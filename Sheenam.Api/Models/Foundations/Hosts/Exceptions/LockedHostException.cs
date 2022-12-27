@@ -8,11 +8,10 @@ using Xeptions;
 
 namespace Sheenam.Api.Models.Foundations.Hosts.Exceptions
 {
-    public class AlreadyExistsHostException : Xeption
+    public class LockedHostException : Xeption
     {
-        public AlreadyExistsHostException(Exception innerException)
-            : base(message: "Allready Host dependency validation error occurred, fix the errors and try again.",
-                  innerException)
+        public LockedHostException(Exception innerException)
+            : base(message: "Host is locked, please try again.", innerException)
         { }
     }
 }
