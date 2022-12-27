@@ -23,7 +23,12 @@ namespace Sheenam.Api.Services.Foundations.Hosts
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<Host> AddHostAsync(Host host) =>
-            await this.storageBroker.InsertHostAsync(host);
+        public ValueTask<Host> AddHostAsync(Host host) =>
+        TryCatch(async () =>
+        {
+            ValidateHostNotNull(host);
+
+            return await this.storageBroker.InsertHostAsync(host);
+        });
     }
 }
