@@ -3,6 +3,7 @@
 // Free To Use To Find Comfort and Pease
 //===================================================
 
+using System.Net.Sockets;
 using EFxceptions.Models.Exceptions;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
@@ -119,7 +120,9 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
         public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccursAndLogItAsync()
         {
             // given
-            Host someHost = CreateRandomHost();
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            DateTimeOffset anotherRandomDateTime = GetRandomDateTimeOffset();
+            Host someHost = CreateRandomHost(randomDateTime);
             var serviceException = new Exception();
 
             var failedHostServiceException =
@@ -127,6 +130,9 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
 
             var expectedHostServiceException =
                 new HostServiceException(failedHostServiceException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTime()).Returns(randomDateTime);
 
             this.storageBrokerMock.Setup(broker => broker.InsertHostAsync(It.IsAny<Host>()))
                 .ThrowsAsync(serviceException);
@@ -142,6 +148,9 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
             actualHostServiceException.Should().BeEquivalentTo(
                 expectedHostServiceException);
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTime(), Times.Once);
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedHostServiceException))), Times.Once);
@@ -149,6 +158,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertHostAsync(It.IsAny<Host>()), Times.Once);
 
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
