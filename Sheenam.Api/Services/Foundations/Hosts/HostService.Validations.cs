@@ -22,7 +22,14 @@ namespace Sheenam.Api.Services.Foundations.Hosts
                 (Rule: IsInvalid(host.Email), Parameter: nameof(Host.Email)),
                 (Rule: IsInvalid(host.PhoneNumber), Parameter: nameof(Host.PhoneNumber)),
                 (Rule: IsInvalid(host.CreatedDate), Parameter: nameof(Host.CreatedDate)),
-                (Rule: IsInvalid(host.UpdatedDate), Parameter: nameof(Host.UpdatedDate)));
+                (Rule: IsInvalid(host.UpdatedDate), Parameter: nameof(Host.UpdatedDate)),
+
+                (Rule: IsNotSame(
+                    firstDate: host.CreatedDate,
+                    secondDate: host.UpdatedDate,
+                    secondDateName: nameof(host.UpdatedDate)),
+
+                Parameter: nameof(host.CreatedDate)));
         }
 
         private static dynamic IsInvalid(Guid id) => new
@@ -42,6 +49,15 @@ namespace Sheenam.Api.Services.Foundations.Hosts
             Condition = date == default,
             Message = "Value is required"
         };
+
+        private static dynamic IsNotSame(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
+            {
+                Condition = firstDate != secondDate,
+                Message = $"Date is not same as {secondDateName}"
+            };
 
         private static void ValidateHostNotNull(Host host)
         {
