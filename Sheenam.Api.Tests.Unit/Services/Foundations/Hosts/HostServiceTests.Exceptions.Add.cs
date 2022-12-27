@@ -147,8 +147,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
                     expectedHostServiceException))), Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.InsertHostAsync(It.IsAny<Host>()),
-                    Times.Once);
+                broker.InsertHostAsync(It.IsAny<Host>()), Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
