@@ -3,7 +3,6 @@
 // Free To Use To Find Comfort and Pease
 //===================================================
 
-using System.Net.Sockets;
 using EFxceptions.Models.Exceptions;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
@@ -95,8 +94,9 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
             var lockedHostException = new LockedHostException(dbUpdateConcurrencyException);
             var expectedHostDependencyValidationException = new HostDependencyValidationException(lockedHostException);
 
-            this.storageBrokerMock.Setup(broker => broker.InsertHostAsync(It.IsAny<Host>()))
-                .ThrowsAsync(dbUpdateConcurrencyException);
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTime())
+                    .Throws(dbUpdateConcurrencyException);
 
             // when
             ValueTask<Host> addHostTask = this.hostService.AddHostAsync(someHost);
@@ -107,13 +107,18 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
             // then
             actualHostDependencyValidationException.Should().BeEquivalentTo(expectedHostDependencyValidationException);
 
-            this.storageBrokerMock.Verify(broker => broker.InsertHostAsync(It.IsAny<Host>()), Times.Once);
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTime(), Times.Once);
 
             this.loggingBrokerMock.Verify(broker => broker.LogError(It.Is(
                 SameExceptionAs(expectedHostDependencyValidationException))), Times.Once);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertHostAsync(It.IsAny<Host>()), Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
