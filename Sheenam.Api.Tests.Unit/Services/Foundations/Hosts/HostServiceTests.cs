@@ -4,6 +4,8 @@
 //===================================================
 
 using System.Linq.Expressions;
+using Microsoft.Data.SqlClient;
+using System.Runtime.Serialization;
 using Moq;
 using Sheenam.Api.Brokers.Loggings;
 using Sheenam.Api.Brokers.Storages;
@@ -35,6 +37,9 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: DateTime.UnixEpoch).GetValue();
+
+        private static SqlException CreateSqlException() =>
+            (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
 
         private static Host CreateRandomHost() =>
             CreateHostFiller().Create();
