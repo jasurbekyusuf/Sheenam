@@ -68,8 +68,8 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
             var expectedHostDependencyValidationException =
                 new HostDependencyValidationException(alreadyExistsHostException);
 
-            this.storageBrokerMock.Setup(broker => broker.InsertHostAsync(It.IsAny<Host>()))
-                .ThrowsAsync(duplicateKeyException);
+            this.dateTimeBrokerMock.Setup(broker => broker.GetCurrentDateTime())
+                .Throws(duplicateKeyException);
 
             // when
             ValueTask<Host> addHostTask = this.hostService.AddHostAsync(someHost);
@@ -81,12 +81,16 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
             actualHostDependencyValidationException.Should().BeEquivalentTo(
                 expectedHostDependencyValidationException);
 
-            this.storageBrokerMock.Verify(broker => broker.InsertHostAsync(
-                It.IsAny<Host>()), Times.Once);
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTime(), Times.Once);
 
             this.loggingBrokerMock.Verify(broker => broker.LogError(It.Is(SameExceptionAs(
                 expectedHostDependencyValidationException))), Times.Once);
 
+            this.storageBrokerMock.Verify(broker => broker.InsertHostAsync(
+                It.IsAny<Host>()), Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
