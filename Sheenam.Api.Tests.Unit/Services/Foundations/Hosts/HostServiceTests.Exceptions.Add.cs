@@ -120,9 +120,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
         public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccursAndLogItAsync()
         {
             // given
-            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-            DateTimeOffset anotherRandomDateTime = GetRandomDateTimeOffset();
-            Host someHost = CreateRandomHost(randomDateTime);
+            Host someHost = CreateRandomHost();
             var serviceException = new Exception();
 
             var failedHostServiceException =
@@ -132,10 +130,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
                 new HostServiceException(failedHostServiceException);
 
             this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTime()).Returns(randomDateTime);
-
-            this.storageBrokerMock.Setup(broker => broker.InsertHostAsync(It.IsAny<Host>()))
-                .ThrowsAsync(serviceException);
+                broker.GetCurrentDateTime()).Throws(serviceException);
 
             // when
             ValueTask<Host> addHostTask =
@@ -156,7 +151,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
                     expectedHostServiceException))), Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.InsertHostAsync(It.IsAny<Host>()), Times.Once);
+                broker.InsertHostAsync(It.IsAny<Host>()), Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
