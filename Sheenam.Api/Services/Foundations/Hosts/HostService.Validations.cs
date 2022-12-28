@@ -34,8 +34,16 @@ namespace Sheenam.Api.Services.Foundations.Hosts
                 Parameter: nameof(host.CreatedDate)));
         }
 
-        private void ValidateHostId(Guid teamId) =>
-            Validate((Rule: IsInvalid(teamId), Parameter: nameof(Host.Id)));
+        private void ValidateHostId(Guid HostId) =>
+            Validate((Rule: IsInvalid(HostId), Parameter: nameof(Host.Id)));
+
+        private void ValidateStorageHost(Host maybeHost, Guid HostId)
+        {
+            if (maybeHost is null)
+            {
+                throw new NotFoundHostException(HostId);
+            }
+        }
 
         private static dynamic IsInvalid(Guid id) => new
         {

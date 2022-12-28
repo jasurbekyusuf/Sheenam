@@ -44,7 +44,13 @@ namespace Sheenam.Api.Services.Foundations.Hosts
         TryCatch(async () =>
         {
             ValidateHostId(hostId);
-            return await storageBroker.SelectHostByIdAsync(hostId);
+
+            Host maybeHost =
+                await storageBroker.SelectHostByIdAsync(hostId);
+
+            ValidateStorageHost(maybeHost, hostId);
+
+            return maybeHost;
         });
     }
 }
