@@ -45,6 +45,11 @@ namespace Sheenam.Api.Services.Foundations.Hosts
             }
         }
 
+        private void ValidateHostOnModify(Host host)
+        {
+            ValidateHostNotNull(host);
+        }
+
         private static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == default,
