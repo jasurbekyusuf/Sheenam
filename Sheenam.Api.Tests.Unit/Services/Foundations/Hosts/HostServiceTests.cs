@@ -60,6 +60,9 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: DateTime.UnixEpoch).GetValue();
 
+        private static string GetRandomMessage() =>
+            new MnemonicString(wordCount: GetRandomNumber()).GetValue();
+
         private static string GetRandomString() =>
             new MnemonicString().GetValue();
 
