@@ -34,6 +34,9 @@ namespace Sheenam.Api.Services.Foundations.Hosts
                 Parameter: nameof(host.CreatedDate)));
         }
 
+        private void ValidateHostId(Guid teamId) =>
+            Validate((Rule: IsInvalid(teamId), Parameter: nameof(Host.Id)));
+
         private static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == default,
