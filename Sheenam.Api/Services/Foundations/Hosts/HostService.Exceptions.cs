@@ -69,17 +69,16 @@ namespace Sheenam.Api.Services.Foundations.Hosts
             }
             catch (SqlException sqlException)
             {
-                var failedHostServiceException = new FailedHostServiceException(sqlException);
+                var failedServiceHostException = new FailedHostServiceException(sqlException);
 
-                throw CreateAndLogCriticalDependencyException(failedHostServiceException);
+                throw CreateAndLogCriticalDependencyException(failedServiceHostException);
             }
             catch (Exception serviException)
             {
-                var failedHostServiceException = new FailedHostServiceException(serviException);
+                var failedServiceHostException = new FailedHostServiceException(serviException);
 
-                throw CreateAndLogServiceException(failedHostServiceException);
+                throw CreateAndLogServiceException(failedServiceHostException);
             }
-
         }
 
         private Exception CreateAndLogServiceException(Xeption exception)
