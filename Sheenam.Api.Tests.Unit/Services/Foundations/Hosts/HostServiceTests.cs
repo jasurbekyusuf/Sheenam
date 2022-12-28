@@ -4,6 +4,7 @@
 //===================================================
 
 using System.Linq.Expressions;
+using System.Net.Sockets;
 using System.Runtime.Serialization;
 using Microsoft.Data.SqlClient;
 using Moq;
@@ -85,6 +86,12 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
 
         private static Host CreateRandomHost() =>
             CreateHostFiller(GetRandomDateTimeOffset()).Create();
+
+        private static IQueryable<Host> CreateRandomHosts()
+        {
+            return CreateHostFiller(dates: GetRandomDateTimeOffset())
+                .Create(count: GetRandomNumber()).AsQueryable();
+        }
 
         private static Filler<Host> CreateHostFiller(DateTimeOffset dates)
         {
