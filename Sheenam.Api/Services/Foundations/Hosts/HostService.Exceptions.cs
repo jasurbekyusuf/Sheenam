@@ -4,6 +4,7 @@
 //===================================================
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -16,6 +17,7 @@ namespace Sheenam.Api.Services.Foundations.Hosts
 {
     public partial class HostService
     {
+        private delegate IQueryable<Host> ReturningHostsFunction();
         private delegate ValueTask<Host> ReturningHostFunction();
 
         private async ValueTask<Host> TryCatch(ReturningHostFunction returningHostFunction)
@@ -54,6 +56,26 @@ namespace Sheenam.Api.Services.Foundations.Hosts
             catch (Exception serviceException)
             {
                 var failedServiceHostException = new FailedHostServiceException(serviceException);
+
+                throw CreateAndLogServiceException(failedServiceHostException);
+            }
+        }
+
+        private IQueryable<Host> TryCatch(ReturningHostsFunction returningHostsFunction)
+        {
+            try
+            {
+                return returningHostsFunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedServiceHostException = new FailedHostServiceException(sqlException);
+
+                throw CreateAndLogCriticalDependencyException(failedServiceHostException);
+            }
+            catch (Exception serviException)
+            {
+                var failedServiceHostException = new FailedHostServiceException(serviException);
 
                 throw CreateAndLogServiceException(failedServiceHostException);
             }
