@@ -27,8 +27,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
                 new HostDependencyException(failedHostStorageException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectHostByIdAsync(It.IsAny<Guid>()))
-                    .ThrowsAsync(sqlException);
+                broker.SelectHostByIdAsync(It.IsAny<Guid>())).ThrowsAsync(sqlException);
 
             // when
             ValueTask<Host> retrieveHostByIdTask =
@@ -48,6 +47,44 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
                     expectedHostDependencyException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnRetrieveByIdAsyncIfServiceErrorOccursAndLogItAsync()
+        {
+            //given
+            Guid someId = Guid.NewGuid();
+            var serviceException = new Exception();
+
+            var failedHostServiceException =
+                new FailedHostServiceException(serviceException);
+
+            var expectedHostServiceExcpetion =
+                new HostServiceException(failedHostServiceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectHostByIdAsync(It.IsAny<Guid>())).ThrowsAsync(serviceException);
+
+            //when
+            ValueTask<Host> retrieveHostById =
+            this.hostService.RetrieveHostByIdAsync(someId);
+
+            HostServiceException actualCommentServiceException =
+                await Assert.ThrowsAsync<HostServiceException>(retrieveHostById.AsTask);
+
+            // then
+            actualCommentServiceException.Should().BeEquivalentTo(expectedHostServiceExcpetion);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectHostByIdAsync(It.IsAny<Guid>()), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+               broker.LogError(It.Is(SameExceptionAs(
+                   expectedHostServiceExcpetion))), Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
