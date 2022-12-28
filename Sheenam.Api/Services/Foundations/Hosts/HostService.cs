@@ -3,6 +3,7 @@
 // Free To Use To Find Comfort and Pease
 //===================================================
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Sheenam.Api.Brokers.DateTimes;
@@ -38,5 +39,8 @@ namespace Sheenam.Api.Services.Foundations.Hosts
 
         public IQueryable<Host> RetrieveAllHosts() =>
         TryCatch(() => this.storageBroker.SelectAllHosts());
+
+        public ValueTask<Host> RetrieveHostByIdAsync(Guid hostId) =>
+            throw new NotImplementedException();
     }
 }
