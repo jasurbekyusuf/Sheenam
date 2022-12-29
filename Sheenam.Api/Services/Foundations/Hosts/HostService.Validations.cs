@@ -14,6 +14,7 @@ namespace Sheenam.Api.Services.Foundations.Hosts
         private void ValidateHost(Host host)
         {
             ValidateHostNotNull(host);
+
             Validate(
                 (Rule: IsInvalid(host.Id), Parameter: nameof(Host.Id)),
                 (Rule: IsInvalid(host.FirstName), Parameter: nameof(Host.FirstName)),
@@ -29,26 +30,47 @@ namespace Sheenam.Api.Services.Foundations.Hosts
                 (Rule: IsNotSame(
                     firstDate: host.CreatedDate,
                     secondDate: host.UpdatedDate,
-                    secondDateName: nameof(host.UpdatedDate)),
+                    secondDateName: nameof(Host.UpdatedDate)),
 
-                Parameter: nameof(host.CreatedDate)));
+                Parameter: nameof(Host.CreatedDate)));
         }
 
         private void ValidateHostId(Guid HostId) =>
             Validate((Rule: IsInvalid(HostId), Parameter: nameof(Host.Id)));
 
-        private void ValidateStorageHost(Host maybeHost, Guid HostId)
+        private void ValidateStorageHostExists(Host maybeHost, Guid hostId)
         {
             if (maybeHost is null)
             {
-                throw new NotFoundHostException(HostId);
+                throw new NotFoundHostException(hostId);
             }
         }
 
         private void ValidateHostOnModify(Host host)
         {
             ValidateHostNotNull(host);
+
+            Validate(
+                (Rule: IsInvalid(host.Id), Parameter: nameof(Host.Id)),
+                (Rule: IsInvalid(host.FirstName), Parameter: nameof(Host.FirstName)),
+                (Rule: IsInvalid(host.LastName), Parameter: nameof(Host.LastName)),
+                (Rule: IsInvalid(host.DateOfBirth), Parameter: nameof(Host.DateOfBirth)),
+                (Rule: IsInvalid(host.Email), Parameter: nameof(Host.Email)),
+                (Rule: IsInvalid(host.PhoneNumber), Parameter: nameof(Host.PhoneNumber)),
+                (Rule: IsInvalid(host.GenderType), Parameter: nameof(Host.GenderType)),
+                (Rule: IsInvalid(host.CreatedDate), Parameter: nameof(Host.CreatedDate)),
+                (Rule: IsInvalid(host.UpdatedDate), Parameter: nameof(Host.UpdatedDate)),
+                (Rule: IsNotRecent(host.UpdatedDate), Parameter: nameof(Host.UpdatedDate)),
+
+                (Rule: IsSame(
+                    firstDate: host.CreatedDate,
+                    secondDate: host.UpdatedDate,
+                    secondDateName: nameof(Host.CreatedDate)),
+
+                Parameter: nameof(Host.UpdatedDate)));
         }
+
+
 
         private static dynamic IsInvalid(Guid id) => new
         {
@@ -81,6 +103,15 @@ namespace Sheenam.Api.Services.Foundations.Hosts
             {
                 Condition = firstDate != secondDate,
                 Message = $"Date is not same as {secondDateName}"
+            };
+
+        private static dynamic IsSame(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
+            {
+                Condition = firstDate == secondDate,
+                Message = $"Date is the same as {secondDateName}"
             };
 
         private static bool IsEnumInvalid<T>(T value)

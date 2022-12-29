@@ -71,7 +71,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
 
             invalidHostException.AddData(
                 key: nameof(Host.DateOfBirth),
-                values: "Date is required");
+                values: "Value is required");
 
             invalidHostException.AddData(
                 key: nameof(Host.Email),
@@ -83,13 +83,13 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
 
             invalidHostException.AddData(
                key: nameof(Host.CreatedDate),
-               values: "Date is required");
+               values: "Value is required");
 
             invalidHostException.AddData(
                 key: nameof(Host.UpdatedDate),
                     values: new[]
                     {
-                        "Date is required",
+                        "Value is required",
                         "Date is not recent",
                         $"Date is the same as {nameof(Host.CreatedDate)}"
                     }
