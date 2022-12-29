@@ -188,7 +188,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
 
             invalidHostException.AddData(
                 key: nameof(Host.UpdatedDate),
-                values: "Date is not recent.");
+                values: "Date is not recent");
 
             var expectedHostValidatonException =
                 new HostValidationException(invalidHostException);
