@@ -46,6 +46,14 @@ namespace Sheenam.Api.Services.Foundations.Hosts
             }
         }
 
+        private static void ValidateStorageHostModify(Host maybeHost, Guid HostId)
+        {
+            if (maybeHost is null)
+            {
+                throw new NotFoundHostException(HostId);
+            }
+        }
+
         private void ValidateHostOnModify(Host host)
         {
             ValidateHostNotNull(host);
