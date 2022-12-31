@@ -12,6 +12,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
 {
     public partial class HostServiceTests
     {
+        [Fact]
         public async Task ShouldRemoveHostByIdAsync()
         {
             // given
