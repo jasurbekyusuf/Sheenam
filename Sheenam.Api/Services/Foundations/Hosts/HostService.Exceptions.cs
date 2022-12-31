@@ -57,6 +57,12 @@ namespace Sheenam.Api.Services.Foundations.Hosts
 
                 throw CreateAndDependencyValidationException(lockedHostException);
             }
+            catch (DbUpdateException databaseUpdateException)
+            {
+                var failedHostStorageException = new FailedHostStorageException(databaseUpdateException);
+
+                throw CreateAndLogDependencyException(failedHostStorageException);
+            }
             catch (Exception serviceException)
             {
                 var failedServiceHostException = new FailedHostServiceException(serviceException);
@@ -85,7 +91,15 @@ namespace Sheenam.Api.Services.Foundations.Hosts
             }
         }
 
-        private Exception CreateAndLogServiceException(Xeption exception)
+        private HostValidationException CreateAndLogValidationException(Xeption exception)
+        {
+            var hostValidationException = new HostValidationException(exception);
+            this.loggingBroker.LogError(hostValidationException);
+
+            return hostValidationException;
+        }
+
+        private HostServiceException CreateAndLogServiceException(Xeption exception)
         {
             var hostserviceException = new HostServiceException(exception);
             this.loggingBroker.LogError(hostserviceException);
@@ -93,12 +107,12 @@ namespace Sheenam.Api.Services.Foundations.Hosts
             return hostserviceException;
         }
 
-        private HostValidationException CreateAndLogValidationException(Xeption exception)
+        private HostDependencyException CreateAndLogDependencyException(Xeption exception)
         {
-            var hostValidationException = new HostValidationException(exception);
-            this.loggingBroker.LogError(hostValidationException);
+            var hostDependencyException = new HostDependencyException(exception);
+            this.loggingBroker.LogError(hostDependencyException);
 
-            return hostValidationException;
+            return hostDependencyException;
         }
 
         private HostDependencyException CreateAndLogCriticalDependencyException(Xeption exception)

@@ -4,7 +4,6 @@
 //===================================================
 
 using System.Linq.Expressions;
-using System.Net.Sockets;
 using System.Runtime.Serialization;
 using Microsoft.Data.SqlClient;
 using Moq;
@@ -64,7 +63,21 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
             new MnemonicString(wordCount: GetRandomNumber()).GetValue();
 
         private static string GetRandomString() =>
-            new MnemonicString().GetValue();
+        new MnemonicString().GetValue();
+
+        private static int GetRandomNegativeNumber() =>
+            -1 * new IntRange(min: 2, max: 10).GetValue();
+
+        private static Host CreateRandomModifyHost(DateTimeOffset dates)
+        {
+            int randomDaysInPast = GetRandomNegativeNumber();
+            Host randomHost = CreateRandomHost(dates);
+
+            randomHost.CreatedDate =
+                randomHost.CreatedDate.AddDays(randomDaysInPast);
+
+            return randomHost;
+        }
 
         private static SqlException CreateSqlException() =>
             (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
