@@ -38,7 +38,7 @@ namespace Sheenam.Api.Services.Foundations.Hosts
         private void ValidateHostId(Guid HostId) =>
             Validate((Rule: IsInvalid(HostId), Parameter: nameof(Host.Id)));
 
-        private void ValidateStorageHostExists(Host maybeHost, Guid hostId)
+        private static void ValidateStorageHostExists(Host maybeHost, Guid hostId)
         {
             if (maybeHost is null)
             {
@@ -48,6 +48,8 @@ namespace Sheenam.Api.Services.Foundations.Hosts
 
         private static void ValidateStorageHostOnModify(Host inputHost, Host storageHost)
         {
+            ValidateStorageHostExists(storageHost, inputHost.Id);
+
             Validate(
             (Rule: IsNotSame(
                     firstDate: inputHost.CreatedDate,
