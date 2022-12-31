@@ -323,5 +323,54 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfStorageUpdatedDateSameAsUpdatedDateAndLogItAsync()
+        {
+            // given
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            Host randomHost = CreateRandomModifyHost(randomDateTime);
+            Host invalidHost = randomHost;
+            Host storageHost = randomHost.DeepClone();
+            invalidHost.UpdatedDate = storageHost.UpdatedDate;
+            Guid HostId = invalidHost.Id;
+            var invalidHostException = new InvalidHostException();
+
+            invalidHostException.AddData(
+            key: nameof(Host.UpdatedDate),
+                values: $"Date is the same as {nameof(Host.UpdatedDate)}");
+
+            var expectedHostValidationException =
+                new HostValidationException(invalidHostException);
+
+            this.storageBrokerMock.Setup(broker =>
+               broker.SelectHostByIdAsync(invalidHost.Id)).ReturnsAsync(storageHost);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTime()).Returns(randomDateTime);
+
+            // when
+            ValueTask<Host> modifyHostTask = this.hostService.ModifyHostAsync(invalidHost);
+
+            HostValidationException actualHostValidationException =
+               await Assert.ThrowsAsync<HostValidationException>(modifyHostTask.AsTask);
+
+            // then
+            actualHostValidationException.Should().BeEquivalentTo(expectedHostValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectHostByIdAsync(HostId), Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTime(), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedHostValidationException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
