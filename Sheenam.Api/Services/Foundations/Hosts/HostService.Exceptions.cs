@@ -57,6 +57,12 @@ namespace Sheenam.Api.Services.Foundations.Hosts
 
                 throw CreateAndDependencyValidationException(lockedHostException);
             }
+            catch (DbUpdateException databaseUpdateException)
+            {
+                var failedHostStorageException = new FailedHostStorageException(databaseUpdateException);
+
+                throw CreateAndLogDependencyException(failedHostStorageException);
+            }
             catch (Exception serviceException)
             {
                 var failedServiceHostException = new FailedHostServiceException(serviceException);
@@ -99,6 +105,14 @@ namespace Sheenam.Api.Services.Foundations.Hosts
             this.loggingBroker.LogError(hostserviceException);
 
             return hostserviceException;
+        }
+
+        private HostDependencyException CreateAndLogDependencyException(Xeption exception)
+        {
+            var hostDependencyException = new HostDependencyException(exception);
+            this.loggingBroker.LogError(hostDependencyException);
+
+            return hostDependencyException;
         }
 
         private HostDependencyException CreateAndLogCriticalDependencyException(Xeption exception)
