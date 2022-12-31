@@ -73,11 +73,11 @@ namespace Sheenam.Api.Controllers
         }
 
         [HttpGet("{hostId}")]
-        public async ValueTask<ActionResult<Host>> GetHostByIdAsync(Guid Id)
+        public async ValueTask<ActionResult<Host>> GetHostByIdAsync(Guid hostId)
         {
             try
             {
-                return await this.hostService.RetrieveHostByIdAsync(Id);
+                return await this.hostService.RetrieveHostByIdAsync(hostId);
             }
             catch (HostDependencyException hostDependencyException)
             {
@@ -133,7 +133,7 @@ namespace Sheenam.Api.Controllers
             }
         }
 
-        [HttpDelete("{HostId}")]
+        [HttpDelete("{hostId}")]
         public async ValueTask<ActionResult<Host>> DeleteHostByIdAsync(Guid hostId)
         {
             try

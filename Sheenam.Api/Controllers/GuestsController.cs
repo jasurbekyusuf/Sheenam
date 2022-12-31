@@ -138,12 +138,12 @@ namespace Sheenam.Api.Controllers
         }
 
         [HttpDelete("{guestId}")]
-        public async ValueTask<ActionResult<Guest>> DeleteGuestByIdAsync(Guid postId)
+        public async ValueTask<ActionResult<Guest>> DeleteGuestByIdAsync(Guid guestId)
         {
             try
             {
                 Guest deletedGuest =
-                    await this.guestService.RemoveGuestByIdAsync(postId);
+                    await this.guestService.RemoveGuestByIdAsync(guestId);
 
                 return Ok(deletedGuest);
             }

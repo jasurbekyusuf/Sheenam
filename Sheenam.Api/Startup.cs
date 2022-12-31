@@ -37,8 +37,11 @@ namespace Sheenam.Api
             AddBrokers(services);
             AddFoundationServices(services);
 
+
             services.AddSwaggerGen(options =>
             {
+                options.CustomSchemaIds(type => type.ToString());
+
                 options.SwaggerDoc(
                     name: "v1",
                     info: apiInfo);
