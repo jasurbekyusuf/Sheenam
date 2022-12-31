@@ -133,7 +133,7 @@ namespace Sheenam.Api.Controllers
             }
         }
 
-        [HttpDelete("{HostId}")]
+        [HttpDelete("{hostId}")]
         public async ValueTask<ActionResult<Host>> DeleteHostByIdAsync(Guid hostId)
         {
             try
