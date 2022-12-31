@@ -46,12 +46,20 @@ namespace Sheenam.Api.Services.Foundations.Hosts
             }
         }
 
-        private static void ValidateStorageHostModify(Host maybeHost, Guid HostId)
+        private static void ValidateStorageHostOnModify(Host inputHost, Host storageHost)
         {
-            if (maybeHost is null)
-            {
-                throw new NotFoundHostException(HostId);
-            }
+            Validate(
+            (Rule: IsNotSame(
+                    firstDate: inputHost.CreatedDate,
+                    secondDate: storageHost.CreatedDate,
+                    secondDateName: nameof(Host.CreatedDate)),
+                Parameter: nameof(Host.CreatedDate)),
+
+            (Rule: IsSame(
+                        firstDate: inputHost.UpdatedDate,
+                        secondDate: storageHost.UpdatedDate,
+                        secondDateName: nameof(Host.UpdatedDate)),
+                Parameter: nameof(Host.UpdatedDate)));
         }
 
         private void ValidateHostOnModify(Host host)
@@ -71,14 +79,12 @@ namespace Sheenam.Api.Services.Foundations.Hosts
                 (Rule: IsNotRecent(host.UpdatedDate), Parameter: nameof(Host.UpdatedDate)),
 
                 (Rule: IsSame(
-                    firstDate: host.CreatedDate,
-                    secondDate: host.UpdatedDate,
+                    firstDate: host.UpdatedDate,
+                    secondDate: host.CreatedDate,
                     secondDateName: nameof(Host.CreatedDate)),
 
                 Parameter: nameof(Host.UpdatedDate)));
         }
-
-
 
         private static dynamic IsInvalid(Guid id) => new
         {

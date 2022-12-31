@@ -85,20 +85,20 @@ namespace Sheenam.Api.Services.Foundations.Hosts
             }
         }
 
-        private Exception CreateAndLogServiceException(Xeption exception)
-        {
-            var hostserviceException = new HostServiceException(exception);
-            this.loggingBroker.LogError(hostserviceException);
-
-            return hostserviceException;
-        }
-
         private HostValidationException CreateAndLogValidationException(Xeption exception)
         {
             var hostValidationException = new HostValidationException(exception);
             this.loggingBroker.LogError(hostValidationException);
 
             return hostValidationException;
+        }
+
+        private HostServiceException CreateAndLogServiceException(Xeption exception)
+        {
+            var hostserviceException = new HostServiceException(exception);
+            this.loggingBroker.LogError(hostserviceException);
+
+            return hostserviceException;
         }
 
         private HostDependencyException CreateAndLogCriticalDependencyException(Xeption exception)

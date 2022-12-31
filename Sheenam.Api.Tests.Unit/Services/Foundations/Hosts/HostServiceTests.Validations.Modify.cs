@@ -288,7 +288,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
 
             invalidHostException.AddData(
                 key: nameof(Host.CreatedDate),
-                values: $"Date is not same as {nameof(Host.CreatedDate)}.");
+                values: $"Date is not same as {nameof(Host.CreatedDate)}");
 
             var expectedHostValidationException =
                 new HostValidationException(invalidHostException);
