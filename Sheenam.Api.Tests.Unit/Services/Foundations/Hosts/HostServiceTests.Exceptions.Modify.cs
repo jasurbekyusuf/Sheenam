@@ -166,5 +166,56 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Hosts
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnModifyIfDatabaseUpdateErrorOccursAndLogItAsync()
+        {
+            // given
+            int minuteInPast = GetRandomNegativeNumber();
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            Host randomHost = CreateRandomHost(randomDateTime);
+            Host someHost = randomHost;
+            someHost.CreatedDate = randomDateTime.AddMinutes(minuteInPast);
+            var serviceException = new Exception();
+
+            var failedHostException =
+                new FailedHostServiceException(serviceException);
+
+            var expectedHostServiceException =
+                new HostServiceException(failedHostException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectHostByIdAsync(someHost.Id))
+                    .ThrowsAsync(serviceException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTime()).Returns(randomDateTime);
+
+            // when
+            ValueTask<Host> modifyHostTask =
+                this.hostService.ModifyHostAsync(someHost);
+
+            HostServiceException actualHostServiceException =
+                await Assert.ThrowsAsync<HostServiceException>(
+                    modifyHostTask.AsTask);
+
+            // then
+            actualHostServiceException.Should().BeEquivalentTo(
+                expectedHostServiceException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectHostByIdAsync(someHost.Id), Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTime(), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedHostServiceException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
