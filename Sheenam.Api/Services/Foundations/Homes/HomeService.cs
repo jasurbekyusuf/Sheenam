@@ -27,7 +27,12 @@ namespace Sheenam.Api.Services.Foundations.Homes
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<Home> AddHomeAsync(Home home) =>
-            await this.storageBroker.InsertHomeAsync(home);
+        public ValueTask<Home> AddHomeAsync(Home home) =>
+            TryCatch(async () =>
+            {
+                ValidateHomeNotNull(home);
+
+                return await this.storageBroker.InsertHomeAsync(home);
+            });
     }
 }
