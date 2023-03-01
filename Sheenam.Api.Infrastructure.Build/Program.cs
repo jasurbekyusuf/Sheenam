@@ -43,7 +43,7 @@ var githubPipeline = new GithubPipeline
                     Name = "Seting Up .NET",
                     TargetDotNetVersion = new TargetDotNetVersion
                     {
-                        DotNetVersion = "6.0.402"
+                        DotNetVersion = "7.0.200"
                     }
                 },
 
