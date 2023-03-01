@@ -31,7 +31,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Homes
             actualHome.Should().BeEquivalentTo(expectedHome);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTime(), Times.Once);
+                broker.GetCurrentDateTime(), Times.Never);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertHomeAsync(inputHome), Times.Once);
