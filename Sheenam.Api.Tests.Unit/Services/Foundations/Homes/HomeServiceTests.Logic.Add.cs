@@ -1,4 +1,9 @@
-﻿using FluentAssertions;
+﻿//===================================================
+// Copyright (c)  coalition of Good-Hearted Engineers
+// Free To Use To Find Comfort and Pease
+//===================================================
+
+using FluentAssertions;
 using Force.DeepCloner;
 using Moq;
 using Sheenam.Api.Models.Foundations.Homes;

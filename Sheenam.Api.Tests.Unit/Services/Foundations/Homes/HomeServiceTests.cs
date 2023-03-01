@@ -1,4 +1,9 @@
-﻿using System.Linq.Expressions;
+﻿//===================================================
+// Copyright (c)  coalition of Good-Hearted Engineers
+// Free To Use To Find Comfort and Pease
+//===================================================
+
+using System.Linq.Expressions;
 using Moq;
 using Sheenam.Api.Brokers.DateTimes;
 using Sheenam.Api.Brokers.Loggings;

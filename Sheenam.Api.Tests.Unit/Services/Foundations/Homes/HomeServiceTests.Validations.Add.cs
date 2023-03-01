@@ -1,4 +1,9 @@
-﻿using FluentAssertions;
+﻿//===================================================
+// Copyright (c)  coalition of Good-Hearted Engineers
+// Free To Use To Find Comfort and Pease
+//===================================================
+
+using FluentAssertions;
 using Moq;
 using Sheenam.Api.Models.Foundations.Homes;
 using Sheenam.Api.Models.Foundations.Hosts.Exceptions;
@@ -27,6 +32,60 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Homes
             // then
             actualHomeValidationException.Should().BeEquivalentTo(
                 expectedHomeValidationException);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedHomeValidationException))), Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertHomeAsync(It.IsAny<Home>()), Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public async Task ShouldThrowValidationExceptionOnAddIfHomeIsInvalidAbdLogItAsync(
+            string invalidString)
+        {
+            // given
+            var invalidHome = new Home
+            {
+                Adress = invalidString
+            };
+
+            var invalidHomeException = new InvalidHomeException();
+
+            invalidHomeException.AddData(
+                key: nameof(Home.Id),
+                values: "Id is required");
+
+            invalidHomeException.AddData(
+                key: nameof(Home.HostId),
+                values: "Id is required");
+
+            invalidHomeException.AddData(
+                key: nameof(Home.Adress),
+                values: "Text is required");
+
+            invalidHomeException.AddData(
+                key: nameof(Home.AdditionalInfo),
+                values: "Text is required");
+
+            var expectedHomeValidationException =
+                new HomeValidationException(invalidHomeException);
+
+            // when
+            ValueTask<Home> addHometask = this.homeService.AddHomeAsync(invalidHome);
+
+            HomeValidationException actualHomeValidationException =
+                await Assert.ThrowsAsync<HomeValidationException>(addHometask.AsTask);
+
+            // then
+            actualHomeValidationException.Should().BeEquivalentTo(expectedHomeValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
