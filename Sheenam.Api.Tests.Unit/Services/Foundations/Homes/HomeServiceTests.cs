@@ -3,6 +3,7 @@
 // Free To Use To Find Comfort and Pease
 //===================================================
 
+using System.Linq.Expressions;
 using Moq;
 using Sheenam.Api.Brokers.DateTimes;
 using Sheenam.Api.Brokers.Loggings;
@@ -10,6 +11,7 @@ using Sheenam.Api.Brokers.Storages;
 using Sheenam.Api.Models.Foundations.Homes;
 using Sheenam.Api.Services.Foundations.Homes;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace Sheenam.Api.Tests.Unit.Services.Foundations.Homes
 {
@@ -31,6 +33,9 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Homes
                 dateTimeBroker: this.dateTimeBrokerMock.Object,
                 loggingBroker: this.loggingBrokerMock.Object);
         }
+
+        private Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedExceptoin) =>
+            actualException => actualException.SameExceptionAs(expectedExceptoin);
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: DateTime.UnixEpoch).GetValue();
