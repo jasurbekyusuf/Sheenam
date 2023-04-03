@@ -5,6 +5,7 @@
 
 using Sheenam.Api.Models.Foundations.Homes;
 using Sheenam.Api.Models.Foundations.Homes.Exceptions;
+using Sheenam.Api.Models.Foundations.Hosts.Exceptions;
 using System.Linq;
 using System.Threading.Tasks;
 using Xeptions;
@@ -29,6 +30,10 @@ namespace Sheenam.Api.Services.Foundations.Homes
             catch (InvalidHomeException invalidHomeException)
             {
                 throw CreateAndLogValidationException(invalidHomeException);
+            }
+            catch (NotFoundHomeException notFoundHomeException)
+            {
+                throw CreateAndLogValidationException(notFoundHomeException);
             }
         }
 
