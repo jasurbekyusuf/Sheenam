@@ -28,7 +28,17 @@ namespace Sheenam.Api.Services.Foundations.Homes
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<Home> RetrieveHomeByIdAsync(Guid homeId) =>
-            await this.storageBroker.SelectHomeByIdAsync(homeId);
+        public ValueTask<Home> RetrieveHomeByIdAsync(Guid homeId) =>
+        TryCatch(async () =>
+        {
+            ValidateHomeId(homeId);
+
+            Home maybeHome =
+                await storageBroker.SelectHomeByIdAsync(homeId);
+
+            ValidateStorageHomeExists(maybeHome, homeId);
+
+            return maybeHome;
+        });
     }
 }

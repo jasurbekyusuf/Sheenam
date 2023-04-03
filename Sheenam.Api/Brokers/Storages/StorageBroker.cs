@@ -3,11 +3,13 @@
 // Free To Use To Find Comfort and Pease
 //===================================================
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Sheenam.Api.Models.Foundations.Homes;
 
 namespace Sheenam.Api.Brokers.Storages
 {
@@ -73,6 +75,11 @@ namespace Sheenam.Api.Brokers.Storages
         public override void Dispose()
         {
             base.Dispose();
+        }
+
+        public ValueTask<Home> SelectHomeByIdAsync(Guid id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

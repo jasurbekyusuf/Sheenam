@@ -7,9 +7,10 @@ using Xeptions;
 
 namespace Sheenam.Api.Models.Foundations.Homes.Exceptions
 {
-    public class InvalidHomeException : Xeption
+    public class NullHomeException : Xeption
     {
-        public InvalidHomeException() : base(message: "Home is invalid.")
+        public NullHomeException()
+            : base(message: "Hpst is null.")
         { }
     }
 }

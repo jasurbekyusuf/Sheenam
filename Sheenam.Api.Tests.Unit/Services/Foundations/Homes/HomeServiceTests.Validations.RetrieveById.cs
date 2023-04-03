@@ -22,7 +22,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Homes
 
             invalidHomeException.AddData(
                 key: nameof(Home.Id),
-                values: "Id is reuired");
+                values: "Id is required");
 
             var expectedHomeValidationException = new
                 HomeValidationException(invalidHomeException);

@@ -3,13 +3,15 @@
 // Free To Use To Find Comfort and Pease
 //===================================================
 
+using System;
 using Xeptions;
 
 namespace Sheenam.Api.Models.Foundations.Homes.Exceptions
 {
-    public class InvalidHomeException : Xeption
+    public class NotFoundHomeException : Xeption
     {
-        public InvalidHomeException() : base(message: "Home is invalid.")
+        public NotFoundHomeException(Guid homeId)
+            : base(message: $"Could not find home with id:{homeId}.")
         { }
     }
 }
