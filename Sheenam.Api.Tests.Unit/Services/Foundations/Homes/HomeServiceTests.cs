@@ -3,7 +3,6 @@
 // Free To Use To Find Comfort and Pease
 //===================================================
 
-using DocumentFormat.OpenXml.Spreadsheet;
 using Moq;
 using Sheenam.Api.Brokers.Storages;
 using Sheenam.Api.Models.Foundations.Homes;
@@ -27,6 +26,7 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Homes
 
         private DateTimeOffset GetRandomDateTimeOffset() =>
           new DateTimeRange(earliestDate: DateTime.UnixEpoch).GetValue();
+
         private Home CreateRandomHome() =>
             CreateHomeFiller(dates: GetRandomDateTimeOffset()).Create();
 

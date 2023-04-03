@@ -10,13 +10,17 @@ using Sheenam.Api.Models.Foundations.Homes;
 
 namespace Sheenam.Api.Services.Foundations.Homes
 {
-    public class HomeService:IHomeService
+    public partial class HomeService : IHomeService
     {
         private IStorageBroker storageBroker;
 
-        public HomeService(IStorageBroker storageBroker)=>
+        public HomeService(IStorageBroker storageBroker) =>
             this.storageBroker = storageBroker;
-        public ValueTask<Home> RemoveHomeByIdAsync(Guid guestId)=>
-            throw new NotImplementedException();
+
+        public async ValueTask<Home> RemoveHomeByIdAsync(Guid hometId)
+        {
+            Home maybeHome =await this.storageBroker.SelectHometByIdAsync(hometId);
+            return await this.storageBroker.DeleteHomeAsync(maybeHome);
+        }
     }
 }
