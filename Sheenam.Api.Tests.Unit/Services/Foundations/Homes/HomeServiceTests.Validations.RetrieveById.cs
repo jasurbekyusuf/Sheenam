@@ -7,7 +7,6 @@ using FluentAssertions;
 using Moq;
 using Sheenam.Api.Models.Foundations.Homes;
 using Sheenam.Api.Models.Foundations.Homes.Exceptions;
-using Sheenam.Api.Models.Foundations.Hosts.Exceptions;
 
 namespace Sheenam.Api.Tests.Unit.Services.Foundations.Homes
 {
@@ -47,6 +46,46 @@ namespace Sheenam.Api.Tests.Unit.Services.Foundations.Homes
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowNotFoundExceptionOnRetrieveByIdIfHomeIsNotFoundAndLogItAsync()
+        {
+            //given
+            Guid someHomeId = Guid.NewGuid();
+            Home noHome = null;
+
+            var notFoundHomeException =
+                new NotFoundHomeException(someHomeId);
+
+            var expectedHomeValidationException =
+                new HomeValidationException(notFoundHomeException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectHomeByIdAsync(It.IsAny<Guid>()))
+                    .ReturnsAsync(noHome);
+
+            //when
+            ValueTask<Home> retrieveHomeByIdTask =
+                this.homeService.RetrieveHomeByIdAsync(someHomeId);
+
+            HomeValidationException actualHomeValidationException =
+                await Assert.ThrowsAsync<HomeValidationException>(
+                    retrieveHomeByIdTask.AsTask);
+
+            // then
+            actualHomeValidationException.Should().BeEquivalentTo(expectedHomeValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectHomeByIdAsync(It.IsAny<Guid>()), Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedHomeValidationException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
