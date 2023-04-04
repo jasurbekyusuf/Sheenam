@@ -7,7 +7,7 @@ using System;
 
 namespace Sheenam.Api.Models.Foundations.HomeRequests
 {
-    public class HomeRequests
+    public class HomeRequest
     {
         public Guid Id { get; set; }
         public Guid GuestId { get; set; }
