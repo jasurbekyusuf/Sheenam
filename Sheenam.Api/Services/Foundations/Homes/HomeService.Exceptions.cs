@@ -3,11 +3,11 @@
 // Free To Use To Find Comfort and Pease
 //===================================================
 
+using System.Linq;
+using System.Threading.Tasks;
 using Sheenam.Api.Models.Foundations.Homes;
 using Sheenam.Api.Models.Foundations.Homes.Exceptions;
 using Sheenam.Api.Models.Foundations.Hosts.Exceptions;
-using System.Linq;
-using System.Threading.Tasks;
 using Xeptions;
 
 namespace Sheenam.Api.Services.Foundations.Homes
@@ -37,12 +37,28 @@ namespace Sheenam.Api.Services.Foundations.Homes
             }
         }
 
+        private HomeDependencyException CreateAndLogDependencyException(Xeption exception)
+        {
+            var homeDependencyException = new HomeDependencyException(exception);
+            this.loggingBroker.LogError(homeDependencyException);
+
+            return homeDependencyException;
+        }
+
         private HomeValidationException CreateAndLogValidationException(Xeption exception)
         {
             var homeValidationException = new HomeValidationException(exception);
             this.loggingBroker.LogError(homeValidationException);
 
             return homeValidationException;
+        }
+
+        private HomeServiceException CreateAndLogServiceException(Xeption exception)
+        {
+            var homeserviceException = new HomeServiceException(exception);
+            this.loggingBroker.LogError(homeserviceException);
+
+            return homeserviceException;
         }
     }
 }
